@@ -184,6 +184,9 @@ const assemble = (parsed: Parsed) => {
     }
     return parsed.initialConsonant;
   })();
+  const middle = (() => {
+
+  })();
 };
 
 for (const [word, stroke] of Object.entries(testCases)) {
