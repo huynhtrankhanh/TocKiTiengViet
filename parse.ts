@@ -165,7 +165,8 @@ const testCases: Record<string, string> = {
   "lâu dài": "HRAOF KWRAFPS",
   "soái ca": "SKPAFPT KA",
   "loài vật": "SHRAFPS WAORZ",
-  "uyển chuyển": "SOEULD SKHOEULD"
+  "uyển chuyển": "SOEULD SKHOEULD",
+  "òa khóc": "SAS KHROBGT"
 };
 
 console.log("Running Test Cases:\n");
