@@ -162,7 +162,9 @@ const testCases: Record<string, string> = {
   "thưa thớt": "THAOE THOURT",
   "tốc kí": "TOEBGT KEUT",
   "phiêu lưu": "TPOEUF HRAOUF",
-  "lâu dài": "HRAOF KWRAFPS"
+  "lâu dài": "HRAOF KWRAFPS",
+  "soái ca": "SKPAFPT KA",
+  "loài vật": "SHRAFPS WAORZ"
 };
 
 console.log("Running Test Cases:\n");
