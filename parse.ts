@@ -121,17 +121,17 @@ const parse = (stroke: string): Parsed => {
 };
 
 const toneAccents: Record<string, Record<string, string>> = {
-  a: { sắc: "á", huyền: "à", hỏi: "ả", ngã: "ã", nặng: "ạ" },
-  ă: { sắc: "ắ", huyền: "ằ", hỏi: "ẳ", ngã: "ẵ", nặng: "ặ" },
-  â: { sắc: "ấ", huyền: "ầ", hỏi: "ẩ", ngã: "ẫ", nặng: "ậ" },
-  e: { sắc: "é", huyền: "è", hỏi: "ẻ", ngã: "ẽ", nặng: "ẹ" },
-  ê: { sắc: "ế", huyền: "ề", hỏi: "ể", ngã: "ễ", nặng: "ệ" },
-  i: { sắc: "í", huyền: "ì", hỏi: "ỉ", ngã: "ĩ", nặng: "ị" },
-  o: { sắc: "ó", huyền: "ò", hỏi: "ỏ", ngã: "õ", nặng: "ọ" },
-  ô: { sắc: "ố", huyền: "ồ", hỏi: "ổ", ngã: "ỗ", nặng: "ộ" },
-  ơ: { sắc: "ớ", huyền: "ờ", hỏi: "ở", ngã: "ỡ", nặng: "ợ" },
-  u: { sắc: "ú", huyền: "ù", hỏi: "ủ", ngã: "ũ", nặng: "ụ" },
-  ư: { sắc: "ứ", huyền: "ừ", hỏi: "ử", ngã: "ữ", nặng: "ự" },
+  a: { "": "a", sắc: "á", huyền: "à", hỏi: "ả", ngã: "ã", nặng: "ạ" },
+  ă: { "": "ă", sắc: "ắ", huyền: "ằ", hỏi: "ẳ", ngã: "ẵ", nặng: "ặ" },
+  â: { "": "â", sắc: "ấ", huyền: "ầ", hỏi: "ẩ", ngã: "ẫ", nặng: "ậ" },
+  e: { "": "e", sắc: "é", huyền: "è", hỏi: "ẻ", ngã: "ẽ", nặng: "ẹ" },
+  ê: { "": "ê", sắc: "ế", huyền: "ề", hỏi: "ể", ngã: "ễ", nặng: "ệ" },
+  i: { "": "i", sắc: "í", huyền: "ì", hỏi: "ỉ", ngã: "ĩ", nặng: "ị" },
+  o: { "": "o", sắc: "ó", huyền: "ò", hỏi: "ỏ", ngã: "õ", nặng: "ọ" },
+  ô: { "": "ô", sắc: "ố", huyền: "ồ", hỏi: "ổ", ngã: "ỗ", nặng: "ộ" },
+  ơ: { "": "ơ", sắc: "ớ", huyền: "ờ", hỏi: "ở", ngã: "ỡ", nặng: "ợ" },
+  u: { "": "u", sắc: "ú", huyền: "ù", hỏi: "ủ", ngã: "ũ", nặng: "ụ" },
+  ư: { "": "ư", sắc: "ứ", huyền: "ừ", hỏi: "ử", ngã: "ữ", nặng: "ự" },
 };
 
 const testCases: Record<string, string> = {
@@ -186,27 +186,38 @@ const assemble = (parsed: Parsed) => {
   })();
   const middle = (() => {
     if (parsed.vowel === "iê/ia") {
+      if (parsed.initialConsonant === "") return "y" + toneAccents["ê"][parsed.tone];
       if (parsed.onGlide) {
-        if (parsed.finalConsonant === "") return "uya";
-        return "uyê";
+        if (parsed.finalConsonant === "") return "uy" + toneAccents["a"][parsed.tone];
+        return "uy" + toneAccents["ê"][parsed.tone];
       }
-      if (parsed.finalConsonant === "") return "ia";
-      return "iê";
+      if (parsed.finalConsonant === "") return toneAccents["i"][parsed.tone] + "a";
+      return "i" + toneAccents["ê"][parsed.tone];
     }
     if (parsed.vowel === "ua/uô") {
-      if (parsed.finalConsonant === "") return "ua";
-      return "uô";
+      if (parsed.finalConsonant === "") return toneAccents["u"][parsed.tone] + "a";
+      return "u" + toneAccents["ô"][parsed.tone];
     }
     if (parsed.vowel === "ưa/ươ") {
-      if (parsed.finalConsonant === "") return "ưa";
-      return "ươ";
+      if (parsed.finalConsonant === "") return toneAccents["ư"][parsed.tone] + "a";
+      return "ư" + toneAccents["ơ"][parsed.tone];
     }
     if (parsed.vowel === "ă" && parsed.finalConsonant === "w") {
-      if (parsed.onGlide) return "ua";
-      return "a";
+      if (parsed.onGlide) return "u" + toneAccents["a"][parsed.tone];
+      return toneAccents["a"][parsed.tone];
     }
-    if (parsed.initialConsonant === "c" && parsed.onGlide) return "u" + parsed.vowel;
-    return (parsed.onGlide ? "o" : "") + parsed.vowel;
+    if (parsed.initialConsonant === "c" && parsed.onGlide) return "u" + toneAccents[parsed.vowel][parsed.tone];
+    if (parsed.onGlide)
+      return toneAccents["o"][parsed.tone] + parsed.vowel;
+    return toneAccents[parsed.vowel][parsed.tone];
+  })();
+  const final = (() => {
+    if (parsed.finalConsonant === "w") {
+      if (parsed.vowel === "iê/ia" || parsed.vowel === "ư" || parsed.vowel === "ê") return "u";
+      return "o";
+    }
+    if (parsed.finalConsonant === "j") return "i";
+    return parsed.finalConsonant;
   })();
 };
 
