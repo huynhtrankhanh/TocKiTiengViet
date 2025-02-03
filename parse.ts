@@ -219,6 +219,7 @@ const assemble = (parsed: Parsed) => {
     if (parsed.finalConsonant === "j") return "i";
     return parsed.finalConsonant;
   })();
+  return initial + middle + final;
 };
 
 for (const [word, stroke] of Object.entries(testCases)) {
