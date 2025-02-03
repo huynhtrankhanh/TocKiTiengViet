@@ -110,7 +110,9 @@ const testCases: Record<string, string> = {
 console.log("Running Test Cases:\n");
 
 const assemble = (parsed: Parsed) => {
-  //
+  const initial = (() => {
+    
+  })();
 };
 
 for (const [word, stroke] of Object.entries(testCases)) {
