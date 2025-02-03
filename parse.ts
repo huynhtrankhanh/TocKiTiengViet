@@ -160,7 +160,9 @@ const testCases: Record<string, string> = {
   "minh chứng": "PHEUPB KHAOUGT",
   "thách thức": "THARBT THAOUBGT",
   "thưa thớt": "THAOE THOURT",
-  "tốc kí": "TOEBGT KEUT"
+  "tốc kí": "TOEBGT KEUT",
+  "phiêu lưu": "TPOEUF HRAOUF",
+  "lâu dài": "HRAOF KWRAFPS"
 };
 
 console.log("Running Test Cases:\n");
@@ -244,6 +246,7 @@ const assemble = (parsed: Parsed) => {
         parsed.vowel === "ê" ||
         parsed.vowel === "u" ||
         parsed.vowel === "ă" ||
+        parsed.vowel === "â" ||
         parsed.vowel === "i"
       )
         return "u";
