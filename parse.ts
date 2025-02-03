@@ -70,9 +70,43 @@ const parse = (stroke: string) => {
   return { onGlide, initialConsonant, vowel, finalConsonant, tone };
 };
 
-// Example Cases:
-console.log(parse("SPWAOEPLT"));  // { onGlide: true, initialConsonant: 'b', vowel: 'ưa/uơ', finalConsonant: 'm', tone: 'sắc' }
-console.log(parse("TPWOEPLS"));   // { onGlide: false, initialConsonant: 'ng/ngh', vowel: 'ô', finalConsonant: 'm', tone: 'huyền' }
-console.log(parse("KHOEU"));      // { onGlide: false, initialConsonant: 'ch', vowel: 'iê/ia', finalConsonant: '', tone: '' }
-console.log(parse("KWRAT"));      // { onGlide: false, initialConsonant: 'd', vowel: 'a', finalConsonant: '', tone: 'sắc' }
-console.log(parse("THAOEG"));     // { onGlide: false, initialConsonant: 'th', vowel: 'ưa/uơ', finalConsonant: 'ng', tone: '' }
+const toneAccents: Record<string, Record<string, string>> = {
+  "a": { "sắc": "á", "huyền": "à", "hỏi": "ả", "ngã": "ã", "nặng": "ạ" },
+  "ă": { "sắc": "ắ", "huyền": "ằ", "hỏi": "ẳ", "ngã": "ẵ", "nặng": "ặ" },
+  "â": { "sắc": "ấ", "huyền": "ầ", "hỏi": "ẩ", "ngã": "ẫ", "nặng": "ậ" },
+  "e": { "sắc": "é", "huyền": "è", "hỏi": "ẻ", "ngã": "ẽ", "nặng": "ẹ" },
+  "ê": { "sắc": "ế", "huyền": "ề", "hỏi": "ể", "ngã": "ễ", "nặng": "ệ" },
+  "i": { "sắc": "í", "huyền": "ì", "hỏi": "ỉ", "ngã": "ĩ", "nặng": "ị" },
+  "o": { "sắc": "ó", "huyền": "ò", "hỏi": "ỏ", "ngã": "õ", "nặng": "ọ" },
+  "ô": { "sắc": "ố", "huyền": "ồ", "hỏi": "ổ", "ngã": "ỗ", "nặng": "ộ" },
+  "ơ": { "sắc": "ớ", "huyền": "ờ", "hỏi": "ở", "ngã": "ỡ", "nặng": "ợ" },
+  "u": { "sắc": "ú", "huyền": "ù", "hỏi": "ủ", "ngã": "ũ", "nặng": "ụ" },
+  "ư": { "sắc": "ứ", "huyền": "ừ", "hỏi": "ử", "ngã": "ữ", "nặng": "ự" },
+};
+
+const testCases: Record<string, string> = {
+  "toại nguyện": "STAFPZ STPWOEULZ",
+  "đình công": "TKEUPBS KOEG",
+  "quyến rũ": "SKOEULT RUTS",
+  "móp méo": "PHOPT PHEFT",
+  "tai": "TAFP",
+  "mây": "PHAORG",
+  "mưa": "PHAOE",
+  "đủ": "TKUD",
+  "nguyên vẹn": "STPWOEUL WELZ",
+  "thèm muốn": "THEPLS PHAEULT",
+  "hoạt động": "SHARZ TKOEGZ",
+  "khuynh hướng": "SKHREUPB HAOEGT",
+  "giới tính": "KWHOUFPT TEUPBT",
+  "tối thui": "TOEFPT THUFP",
+  "xoa dịu": "SWRA KWREUFZ",
+  "tra soát": "TRA SKPART",
+  "đau": "TKAEF",
+  "đao": "TKAF",
+};
+
+console.log("Running Test Cases:\n");
+
+for (const [word, stroke] of Object.entries(testCases)) {
+  console.log(`${word}:`, stroke.split(" ").map(x => [parse(x), assemble(parse(x))]));
+}
