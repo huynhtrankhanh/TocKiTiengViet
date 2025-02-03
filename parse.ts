@@ -164,7 +164,8 @@ const testCases: Record<string, string> = {
   "phiêu lưu": "TPOEUF HRAOUF",
   "lâu dài": "HRAOF KWRAFPS",
   "soái ca": "SKPAFPT KA",
-  "loài vật": "SHRAFPS WAORZ"
+  "loài vật": "SHRAFPS WAORZ",
+  "uyển chuyển": "SOEULD SKHOEULD"
 };
 
 console.log("Running Test Cases:\n");
@@ -200,7 +201,7 @@ const assemble = (parsed: Parsed) => {
   const middle = (() => {
     if (parsed.vowel === "iê/ia") {
       if (parsed.initialConsonant === "")
-        return "y" + toneAccents["ê"][parsed.tone];
+        return (parsed.onGlide ? "uy" : "y") + toneAccents["ê"][parsed.tone];
       if (parsed.onGlide) {
         if (parsed.finalConsonant === "")
           return "uy" + toneAccents["a"][parsed.tone];
