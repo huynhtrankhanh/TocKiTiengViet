@@ -185,7 +185,15 @@ const assemble = (parsed: Parsed) => {
     return parsed.initialConsonant;
   })();
   const middle = (() => {
-
+    if (parsed.vowel === "iê/ia") {
+      if (parsed.onGlide) {
+        if (parsed.finalConsonant === "") return "uya";
+        return "uyê";
+      }
+      if (parsed.finalConsonant === "") return "ia";
+      return "iê";
+    }
+    
   })();
 };
 
