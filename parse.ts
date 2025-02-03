@@ -193,7 +193,20 @@ const assemble = (parsed: Parsed) => {
       if (parsed.finalConsonant === "") return "ia";
       return "iê";
     }
-    
+    if (parsed.vowel === "ua/uô") {
+      if (parsed.finalConsonant === "") return "ua";
+      return "uô";
+    }
+    if (parsed.vowel === "ưa/ươ") {
+      if (parsed.finalConsonant === "") return "ưa";
+      return "ươ";
+    }
+    if (parsed.vowel === "ă" && parsed.finalConsonant === "w") {
+      if (parsed.onGlide) return "ua";
+      return "a";
+    }
+    if (parsed.initialConsonant === "c" && parsed.onGlide) return "u" + parsed.vowel;
+    return (parsed.onGlide ? "o" : "") + parsed.vowel;
   })();
 };
 
