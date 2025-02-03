@@ -25,7 +25,9 @@ const toneMap: Record<string, string> = {
   "TS": "ngã", "Z": "nặng"
 };
 
-const parse = (stroke: string) => {
+type Parsed = { onGlide: boolean, initialConsonant: string, vowel: string, finalConsonant: string, tone: string };
+
+const parse = (stroke: string): Parsed => {
   const onGlide = stroke.startsWith("S");
   if (onGlide) stroke = stroke.substring(1);
 
@@ -106,6 +108,10 @@ const testCases: Record<string, string> = {
 };
 
 console.log("Running Test Cases:\n");
+
+const assemble = (parsed: Parsed) => {
+  //
+};
 
 for (const [word, stroke] of Object.entries(testCases)) {
   console.log(`${word}:`, stroke.split(" ").map(x => [parse(x), assemble(parse(x))]));
