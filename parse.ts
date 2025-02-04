@@ -166,7 +166,8 @@ const testCases: Record<string, string> = {
   "soái ca": "SKPAFPT KA",
   "loài vật": "SHRAFPS WAORZ",
   "uyển chuyển": "SOEULD SKHOEULD",
-  "òa khóc": "SAS KHROBGT"
+  "òa khóc": "SAS KHROBGT",
+  "gì": "KWHEUS"
 };
 
 console.log("Running Test Cases:\n");
@@ -191,6 +192,10 @@ const assemble = (parsed: Parsed) => {
       if (parsed.onGlide) return "g";
       if (f) return "g";
       return "gh";
+    }
+    if (parsed.initialConsonant === "gi") {
+      if (!parsed.onGlide && parsed.vowel === "i") return "g";
+      return "gi";
     }
     if (parsed.initialConsonant === "c") {
       if (parsed.onGlide) return "q";
