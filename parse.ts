@@ -40,6 +40,7 @@ const vowelMap: Record<string, string> = {
   AE: "ă",
   AO: "â",
   U: "u",
+  AOEU: "y"
 };
 
 const finalMap: Record<string, string> = {
@@ -91,8 +92,8 @@ const parse = (stroke: string): Parsed => {
     }
   }
 
-  // Match Vowel (3 -> 2 -> 1 letter)
-  for (let len = 3; len > 0; len--) {
+  // Match Vowel (4 -> 3 -> 2 -> 1 letter)
+  for (let len = 4; len > 0; len--) {
     const candidate = stroke.substring(0, len);
     if (vowelMap[candidate]) {
       vowel = vowelMap[candidate];
@@ -167,7 +168,9 @@ const testCases: Record<string, string> = {
   "loài vật": "SHRAFPS WAORZ",
   "uyển chuyển": "SOEULD SKHOEULD",
   "òa khóc": "SAS KHROBGT",
-  "gì": "KWHEUS"
+  "gì": "KWHEUS",
+  "y tá": "AOEU TAT",
+  "ỷ lại": "AOEUD HRAFPZ"
 };
 
 console.log("Running Test Cases:\n");
