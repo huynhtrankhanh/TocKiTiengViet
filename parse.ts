@@ -141,7 +141,7 @@ const testCases: Record<string, string> = {
   "quyến rũ": "SKOEULT RUTS",
   "móp méo": "PHOPT PHEFT",
   tai: "TAFP",
-  mây: "PHAEFP",
+  mây: "PHAOFP",
   mưa: "PHAOE",
   đủ: "TKUD",
   "nguyên vẹn": "STPWOEUL WELZ",
@@ -169,7 +169,12 @@ const testCases: Record<string, string> = {
   "òa khóc": "SAS KHROBGT",
   "gì": "KWHEUS",
   "y tá": "AOEU TAT",
-  "ỷ lại": "AOEUD HRAFPZ"
+  "ỷ lại": "AOEUD HRAFPZ",
+  "thay đổi": "THAEFP TKOEFPD",
+  "quay lại": "SKAEFP HRAFPZ",
+  "lay lắt": "HRAEFP HRAERT",
+  "thoắt ẩn thoắt hiện": "STHAERT AOLD STHAERT HOEULZ",
+  "lốc xoáy": "HROEBGT SWRAEFPT"
 };
 
 console.log("Running Test Cases:\n");
