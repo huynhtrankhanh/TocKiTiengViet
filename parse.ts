@@ -54,7 +54,6 @@ const finalMap: Record<string, string> = {
   L: "n",
   PL: "m",
   G: "ng",
-  RG: "y",
 };
 
 const toneMap: Record<string, string> = {
@@ -142,7 +141,7 @@ const testCases: Record<string, string> = {
   "quyến rũ": "SKOEULT RUTS",
   "móp méo": "PHOPT PHEFT",
   tai: "TAFP",
-  mây: "PHAORG",
+  mây: "PHAEFP",
   mưa: "PHAOE",
   đủ: "TKUD",
   "nguyên vẹn": "STPWOEUL WELZ",
@@ -238,7 +237,11 @@ const assemble = (parsed: Parsed) => {
       return toneAccents["i"][parsed.tone];
     }
     if (parsed.vowel === "ă" && parsed.finalConsonant === "w") {
-      if (parsed.onGlide) return "u" + toneAccents["a"][parsed.tone];
+      if (parsed.onGlide) return (parsed.initialConsonant === "c" ? "u" : "o") + toneAccents["a"][parsed.tone];
+      return toneAccents["a"][parsed.tone];
+    }
+    if (parsed.vowel === "ă" && parsed.finalConsonant === "j") {
+      if (parsed.onGlide) return (parsed.initialConsonant === "c" ? "u" : "o") + toneAccents["a"][parsed.tone];
       return toneAccents["a"][parsed.tone];
     }
     if (parsed.initialConsonant === "c" && parsed.onGlide)
@@ -264,7 +267,10 @@ const assemble = (parsed: Parsed) => {
         return "u";
       return "o";
     }
-    if (parsed.finalConsonant === "j") return "i";
+    if (parsed.finalConsonant === "j") {
+      if (parsed.vowel === "ă" || parsed.vowel === "â") return "y";
+      return "i";
+    }
     return parsed.finalConsonant;
   })();
   return initial + middle + final;
