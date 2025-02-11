@@ -97,8 +97,8 @@ def parse(stroke):
     final_consonant = ""
     tone = ""
 
-    # Match Initial Consonant (3 -> 2 -> 1 letter)
-    for length in range(3, 0, -1):
+    # Match Initial Consonant (4 -> 3 -> 2 -> 1 letter)
+    for length in range(4, 0, -1):
         candidate = stroke[:length]
         if candidate in stenography_map:
             initial_consonant = stenography_map[candidate]
