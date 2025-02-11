@@ -162,6 +162,8 @@ def assemble(parsed):
             return tone_accents["i"][parsed.tone]
         if parsed.vowel == "ă" and parsed.final_consonant in ["w", "j"]:
             return (("u" if parsed.initial_consonant == "c" else "o") if parsed.on_glide else "") + tone_accents["a"][parsed.tone]
+        if parsed.vowel == "â" and parsed.on_glide:
+            return "u" + tone_accents[parsed.vowel][parsed.tone]
         if parsed.initial_consonant == "c" and parsed.on_glide:
             return "u" + tone_accents[parsed.vowel][parsed.tone]
         if parsed.on_glide:
