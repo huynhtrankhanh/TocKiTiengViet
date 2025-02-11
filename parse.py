@@ -130,7 +130,7 @@ def parse(stroke):
 
 def assemble(parsed):
     def initial():
-        f = parsed.vowel in ["a", "ă", "â", "o", "ô", "ơ", "u", "ư", "ua", "uô", "ưa", "ươ"]
+        f = parsed.vowel in ["a", "ă", "â", "o", "ô", "ơ", "u", "ư", "ua/uô", "ưa/ươ"]
         if parsed.initial_consonant == "ng/ngh":
             return "ng" if parsed.on_glide or f else "ngh"
         if parsed.initial_consonant == "g":
