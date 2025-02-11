@@ -174,7 +174,8 @@ const testCases: Record<string, string> = {
   "quay lại": "SKAEFP HRAFPZ",
   "lay lắt": "HRAEFP HRAERT",
   "thoắt ẩn thoắt hiện": "STHAERT AOLD STHAERT HOEULZ",
-  "lốc xoáy": "HROEBGT SWRAEFPT"
+  "lốc xoáy": "HROEBGT SWRAEFPT",
+  "uy hiếp": "SEU HOEUPT"
 };
 
 console.log("Running Test Cases:\n");
