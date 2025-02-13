@@ -98,7 +98,6 @@ def parse(stroke):
     tone = ""
 
     # Match Initial Consonant (4 -> 3 -> 2 -> 1 letter)
-    survived = False
     for length in range(4, 0, -1):
         candidate = stroke[:length]
         if candidate in stenography_map:
@@ -106,8 +105,6 @@ def parse(stroke):
             stroke = stroke[length:]
             survived = True
             break
-    if not survived:
-        raise KeyError("")
 
     survived = False
     # Match Vowel (4 -> 3 -> 2 -> 1 letter)
