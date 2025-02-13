@@ -98,33 +98,51 @@ def parse(stroke):
     tone = ""
 
     # Match Initial Consonant (4 -> 3 -> 2 -> 1 letter)
+    survived = False
     for length in range(4, 0, -1):
         candidate = stroke[:length]
         if candidate in stenography_map:
             initial_consonant = stenography_map[candidate]
             stroke = stroke[length:]
+            survived = True
             break
+    if not survived:
+        raise KeyError("")
 
+    survived = False
     # Match Vowel (4 -> 3 -> 2 -> 1 letter)
     for length in range(4, 0, -1):
         candidate = stroke[:length]
         if candidate in vowel_map:
             vowel = vowel_map[candidate]
             stroke = stroke[length:]
+            survived = True
             break
+    if not survived:
+        raise KeyError("")
 
+    survived = False
     # Match Final Consonant (2 -> 1 letter)
     for length in range(2, 0, -1):
         candidate = stroke[:length]
         if candidate in final_map:
             final_consonant = final_map[candidate]
             stroke = stroke[length:]
+            survived = True
             break
 
+    if not survived:
+        raise KeyError("")
+
     # Match Tone (if anything left, it must be a tone)
+    survived = stroke == ""
     if stroke in tone_map:
         tone = tone_map[stroke]
         stroke = ""
+        survived = True
+
+    if not survived:
+        raise KeyError("")
 
     return Parsed(on_glide, initial_consonant, vowel, final_consonant, tone)
 
