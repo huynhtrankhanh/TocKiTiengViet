@@ -118,7 +118,6 @@ def parse(stroke):
     if not survived:
         raise KeyError("")
 
-    survived = False
     # Match Final Consonant (2 -> 1 letter)
     for length in range(2, 0, -1):
         candidate = stroke[:length]
@@ -127,9 +126,6 @@ def parse(stroke):
             stroke = stroke[length:]
             survived = True
             break
-
-    if not survived:
-        raise KeyError("")
 
     # Match Tone (if anything left, it must be a tone)
     survived = stroke == ""
