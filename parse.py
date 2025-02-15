@@ -139,6 +139,58 @@ def parse(stroke):
 
     return Parsed(on_glide, initial_consonant, vowel, final_consonant, tone)
 
+def denumeralize_stroke(stroke):
+    """
+    Denumeralizes a stroke by converting digits to their Plover key equivalents
+    and prepending the '#' character, ONLY if the input stroke contains digits
+    and does NOT already start with '#'. Otherwise, return the input as is.
+
+    For example:
+        12A -> #STA  (Numeralized input with digits)
+        #ABC -> #ABC (Already denumeralized)
+        ABC  -> ABC   (No digits, not numeralized)
+        word -> word  (No digits, not numeralized)
+
+    Args:
+        stroke: The stroke string, possibly "numeralized" (e.g., "12A"),
+                already "denumeralized" (e.g., "#ABC"), or not numeralized
+                (e.g., "ABC").
+
+    Returns:
+        The "denumeralized" stroke string (e.g., "#STA", "#ABC", or "ABC").
+    """
+    if stroke.startswith('#'):
+        return stroke  # Already denumeralized, return as is
+
+    has_digit = False
+    for char in stroke:
+        if char.isdigit():
+            has_digit = True
+            break  # No need to check further if we found a digit
+
+    if not has_digit:
+        return stroke  # No digits found, return as is
+
+    digit_to_key = {
+        '1': 'S',
+        '2': 'T',
+        '3': 'P',
+        '4': 'H',
+        '5': 'A',
+        '0': 'O',
+        '6': 'F',
+        '7': 'P',
+        '8': 'L',
+        '9': 'T'
+    }
+    plover_stroke = "#"
+    for char in stroke:
+        if char in digit_to_key:
+            plover_stroke += digit_to_key[char]
+        else:
+            plover_stroke += char  # Keep non-digit characters as they are
+    return plover_stroke
+
 def assemble(parsed):
     def initial():
         f = parsed.vowel in ["a", "ă", "â", "o", "ô", "ơ", "u", "ư", "ua/uô", "ưa/ươ"]
@@ -194,6 +246,12 @@ def assemble(parsed):
 
     return initial() + middle() + final()
 
+def capitalize(x):
+  return x[0].upper() + x[1:]
+
 LONGEST_KEY = 1
 def lookup(stroke):
-  return assemble(parse(stroke[0]))
+  stroke = denumeralize_stroke(stroke[0])
+  if stroke.startswith('#'):
+    return capitalize(assemble(parse(stroke[1:])))
+  return assemble(parse(stroke))
