@@ -252,6 +252,12 @@ def capitalize(x):
 LONGEST_KEY = 1
 def lookup(stroke):
   stroke = denumeralize_stroke(stroke[0])
+  if stroke == "-S":
+    return "{^};{^}";
+  if stroke == "-Z":
+    return "{^}'{^}";
+  if stroke == "-D":
+    return "{^}[{^}";
   if stroke.startswith('#'):
     return capitalize(assemble(parse(stroke[1:])))
   return assemble(parse(stroke))
