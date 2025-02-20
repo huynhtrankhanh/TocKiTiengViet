@@ -292,6 +292,8 @@ def lookup(stroke):
         return "{^}'{^}"
     if stroke == "-D":
         return "{^}[{^}"
+    if stroke == "AO":
+        return "{^}-{^}"
     if stroke.startswith("#"):
         return capitalize(assemble(parse(stroke[1:])))
     return assemble(parse(stroke))
