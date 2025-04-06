@@ -287,11 +287,11 @@ LONGEST_KEY = 1
 def lookup(stroke):
     stroke = denumeralize_stroke(stroke[0])
     if stroke == "-S":
-        return "{^};{^}"
+        return "{^};"
     if stroke == "-Z":
-        return "{^}'{^}"
+        return "{^}'"
     if stroke == "-D":
-        return "{^}[{^}"
+        return "{^}["
     if stroke == "AO":
         return "{^}-{^}"
     if stroke.startswith("#"):
