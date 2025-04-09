@@ -88,3 +88,11 @@ Cơ chế ráp vần của bộ gõ này tuân theo quy tắc chính tả tiến
 | D           | hỏi                  |
 | TS          | ngã                  |
 | Z           | nặng                 |
+
+# Viết hoa chữ cái đầu
+Để viết hoa chữ cái đầu, ta bấm giữ thêm phím # trong tổ hợp phím.
+
+# Gõ các kí tự đặc biệt
+**Với những người dùng bàn phím bình thường:** cứ gõ nó như lâu nay thôi, trên bàn phím QWERTY dùng phím gì cho kí tự đặc biệt thì khi gõ tốc kí vẫn dùng phím đó.
+
+**Với những người đã tốn tiền mua bàn phím tốc kí chuyên dụng:** thôi cố tự định nghĩa tổ hợp phím cho mấy kí tự đặc biệt đi :)) hoặc là nạp từ điển này cho đỡ cay: https://github.com/EPLHREU/emily-symbols
