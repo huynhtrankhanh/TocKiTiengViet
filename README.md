@@ -89,6 +89,15 @@ Cơ chế ráp vần của bộ gõ này tuân theo quy tắc chính tả tiến
 | TS          | ngã                  |
 | Z           | nặng                 |
 
+# Gõ số
+**Với những người dùng bàn phím bình thường:**
+* Cứ gõ nó như lâu nay thôi, trên bàn phím QWERTY dùng phím gì cho số thì khi gõ tốc kí vẫn dùng phím đó.
+* Cấu hình Plover mặc định nó gán hết mấy phím số thành phím #. Vô phần Configure, chọn Machine, chọn Keyboard rồi sửa Keymap, xóa hết mấy cái dấu # đi.
+* Tại vì cái bộ gõ này có dùng phím # để viết hoa chữ cái đầu (xem phần sau), nên gán phím Q trên bàn phím QWERTY thành phím #. Vậy cho nó tiện.
+**Với những người đã tốn tiền mua bàn phím tốc kí chuyên dụng:** nạp từ điển này: https://github.com/StenoHarri/Harri_numbers
+
+**Với những người đã tốn tiền mua bàn phím tốc kí chuyên dụng:**
+
 # Viết hoa chữ cái đầu
 Để viết hoa chữ cái đầu, ta bấm giữ thêm phím # trong tổ hợp phím.
 
