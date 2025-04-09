@@ -8,3 +8,76 @@ Bộ gõ này lấy cảm hứng cực mạnh từ https://github.com/user202729
 Sau khi cài hai thứ này xong, tải file parse.py về rồi nạp vào.
 
 Cơ chế ráp vần của bộ gõ này tuân theo quy tắc chính tả tiếng Việt. Để gõ một âm tiết, ta cần tách nó thành phụ âm đầu, âm đệm, nguyên âm, phụ âm cuối và thanh. Sau khi tách các phần xong, ta có thể xác định tổ hợp phím cần bấm.
+
+**Bảng Âm Đầu**
+
+| Tổ hợp phím | Âm Tiếng Việt |
+| :---------- | :------------ |
+| PW          | b             |
+| K           | c             |
+| KH          | ch            |
+| KWR         | d             |
+| TK          | đ             |
+| TP          | ph            |
+| TKPW        | g             |
+| H           | h             |
+| KWH         | gi            |
+| KHR         | kh            |
+| HR          | l             |
+| PH          | m             |
+| TPH         | n             |
+| TPR         | nh            |
+| TPW         | ng/ngh        |
+| P           | p             |
+| R           | r             |
+| KP          | s             |
+| T           | t             |
+| TH          | th            |
+| TR          | tr            |
+| W           | v             |
+| WR          | x             |
+
+**Bảng Nguyên Âm (Vowels)**
+
+| Tổ hợp phím | Nguyên Âm Tiếng Việt |
+| :---------- | :------------------ |
+| OEU         | iê/ia               |
+| AEU         | ua/uô               |
+| AOE         | ưa/ươ               |
+| AOU         | ư                   |
+| OU          | ơ                   |
+| OE          | ô                   |
+| O           | o                   |
+| AU          | ê                   |
+| E           | e                   |
+| EU          | i                   |
+| A           | a                   |
+| AE          | ă                   |
+| AO          | â                   |
+| U           | u                   |
+| AOEU        | y                   |
+
+**Bảng Âm Cuối**
+
+| Tổ hợp phím | Âm Cuối Tiếng Việt |
+| :---------- | :---------------- |
+| FP          | j                 |
+| F           | w                 |
+| P           | p                 |
+| R           | t                 |
+| BG          | c                 |
+| RB          | ch                |
+| PB          | nh                |
+| L           | n                 |
+| PL          | m                 |
+| G           | ng                |
+
+**Bảng Thanh Điệu**
+
+| Tổ hợp phím | Thanh Điệu Tiếng Việt |
+| :---------- | :------------------- |
+| T           | sắc                  |
+| S           | huyền                |
+| D           | hỏi                  |
+| TS          | ngã                  |
+| Z           | nặng                 |
