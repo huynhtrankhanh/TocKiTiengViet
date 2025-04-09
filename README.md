@@ -15,7 +15,7 @@ Cơ chế ráp vần của bộ gõ này tuân theo quy tắc chính tả tiến
 ## Phương pháp tách âm tiết thành các thành phần
 Để xác định tổ hợp phím cần gõ cho một âm tiết tiếng Việt bằng bộ gõ tốc kí này, trước hết ta cần phân tích âm tiết đó thành 5 thành phần cơ bản theo cấu trúc ngữ âm và quy tắc chính tả tiếng Việt. Các thành phần này bao gồm:
 
-1.  **Thanh điệu:** Là dấu thanh của âm tiết (sắc ´, huyền `, hỏi ², ngã ~, nặng .). Nếu âm tiết không có dấu thanh, nó thuộc thanh ngang (không dấu). Thanh điệu thường được đặt trên hoặc dưới nguyên âm chính.
+1.  **Thanh điệu:** Là dấu thanh của âm tiết (sắc, huyền, hỏi, ngã, nặng). Nếu âm tiết không có dấu thanh, nó thuộc thanh ngang (không dấu). Thanh điệu thường được đặt trên hoặc dưới nguyên âm chính.
     * *Ví dụ:* Trong từ "tiếng", thanh điệu là thanh **sắc**. Trong từ "huyền", thanh điệu là thanh **huyền**. Trong từ "học", thanh điệu là thanh **nặng**. Từ "ba" có thanh **ngang**.
 
 2.  **Phụ âm cuối:** Là phụ âm (hoặc bán nguyên âm) đứng cuối cùng của âm tiết, sau nguyên âm chính. Các phụ âm cuối trong tiếng Việt bao gồm *p, t, c, ch, n, m, ng, nh*. Ngoài ra, các bán nguyên âm cuối đóng vai trò như phụ âm cuối là *o/u* (như trong *ao, au, eo, êu, iu, ưu*) và *i/y* (như trong *ai, ay, oi, ôi, ơi, ui, ưi*).
