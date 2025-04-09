@@ -44,7 +44,7 @@ Cơ chế ráp vần của bộ gõ này tuân theo quy tắc chính tả tiến
 | W           | v             |
 | WR          | x             |
 
-**Bảng Nguyên Âm (Vowels)**
+**Bảng Nguyên Âm**
 
 | Tổ hợp phím | Nguyên Âm Tiếng Việt |
 | :---------- | :------------------ |
