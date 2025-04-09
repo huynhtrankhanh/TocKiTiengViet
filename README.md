@@ -93,6 +93,8 @@ Cơ chế ráp vần của bộ gõ này tuân theo quy tắc chính tả tiến
 Để viết hoa chữ cái đầu, ta bấm giữ thêm phím # trong tổ hợp phím.
 
 # Gõ các kí tự đặc biệt
-**Với những người dùng bàn phím bình thường:** cứ gõ nó như lâu nay thôi, trên bàn phím QWERTY dùng phím gì cho kí tự đặc biệt thì khi gõ tốc kí vẫn dùng phím đó.
+**Với những người dùng bàn phím bình thường:**
+* Cứ gõ nó như lâu nay thôi, trên bàn phím QWERTY dùng phím gì cho kí tự đặc biệt thì khi gõ tốc kí vẫn dùng phím đó.
+* Cấu hình Plover mặc định có vô hiệu hóa một số phím trên bàn phím. Vô phần Configure, chọn Machine, chọn Keyboard rồi sửa Keymap, xóa hết mấy cái no-op.
 
 **Với những người đã tốn tiền mua bàn phím tốc kí chuyên dụng:** thôi cố tự định nghĩa tổ hợp phím cho mấy kí tự đặc biệt đi :)) hoặc là nạp từ điển này cho đỡ cay: https://github.com/EPLHREU/emily-symbols
