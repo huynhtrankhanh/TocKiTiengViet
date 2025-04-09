@@ -2,6 +2,9 @@
 Bộ gõ này lấy cảm hứng cực mạnh từ https://github.com/user202729/plover_vi của anh [Bùi Hồng Đức](https://vietnam.vnanet.vn/vietnamese/tin-tuc/bui-hong-duc-chang-trai-vang-voi-diem-so-tuyet-doi-tai-olympic-tin-hoc-quoc-te-244171.html).
 
 Để sử dụng bộ gõ này, ta cần phải
+* Kiếm một bàn phím hỗ trợ NKRO (nhận nhiều phím cùng lúc)
+  * Để kiểm tra, vô trang https://www.mechanical-keyboard.org/key-rollover-test/ rồi cố ấn nhiều phím xem thử nó nhận hết không. Nhớ đè nhiều phím vô nha.
+  * Bàn phím cơ có khả năng cao đã có NKRO rồi, còn bàn phím mà ở trên laptop thì khả năng cao là không có NKRO.
 * Cài Plover: https://github.com/openstenoproject/plover
 * Cài plugin plover-python-dictionary: https://plover.readthedocs.io/en/latest/dict_formats.html#programmatic-dictionaries
 
