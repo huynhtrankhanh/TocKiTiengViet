@@ -9,6 +9,8 @@ Sau khi cài hai thứ này xong, tải file parse.py về rồi nạp vào.
 
 Cơ chế ráp vần của bộ gõ này tuân theo quy tắc chính tả tiếng Việt. Để gõ một âm tiết, ta cần tách nó thành phụ âm đầu, âm đệm, nguyên âm, phụ âm cuối và thanh. Sau khi tách các phần xong, ta có thể xác định tổ hợp phím cần bấm.
 
+**Đầu tiên, nếu có âm đệm thì nhớ nhấn phím S ở bên trái trong tổ hợp phím.** Sau đó, với những thành phần khác của âm tiết, xem các bảng sau:
+
 **Bảng Âm Đầu**
 
 | Tổ hợp phím | Âm Tiếng Việt |
