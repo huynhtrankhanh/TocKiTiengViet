@@ -20,8 +20,8 @@ Cơ chế ráp vần của bộ gõ này tuân theo quy tắc chính tả tiến
 
 2.  **Phụ âm cuối:** Là phụ âm (hoặc bán nguyên âm) đứng cuối cùng của âm tiết, sau nguyên âm chính. Các phụ âm cuối trong tiếng Việt bao gồm *p, t, c, ch, n, m, ng, nh*. Ngoài ra, các bán nguyên âm cuối đóng vai trò như phụ âm cuối là *o/u* (như trong *ao, au, eo, êu, iu, ưu*) và *i/y* (như trong *ai, ay, oi, ôi, ơi, ui, ưi*).
     Trong hệ thống tốc kí này, dựa vào bảng Âm Cuối:
-    * Âm cuối **o/u** được đại diện bởi mã 'w', gõ bằng tổ hợp phím **F**. Hàm `assemble` trong `parse.py` sẽ tự động quyết định dùng 'o' hay 'u' dựa vào nguyên âm chính đi trước (ví dụ: 'a' + 'w'/'F' -> "ao", nhưng 'ê' + 'w'/'F' -> "êu", 'ă' + 'w'/'F' -> "au").
-    * Âm cuối **i/y** được đại diện bởi mã 'j', gõ bằng tổ hợp phím **FP**. Hàm `assemble` sẽ tự động quyết định dùng 'i' hay 'y' dựa vào nguyên âm chính đi trước (ví dụ: 'a' + 'j'/'FP' -> "ai", nhưng 'ă' + 'j'/'FP' -> "ay", 'â' + 'j'/'FP' -> "ây").
+    * Âm cuối **o/u** được đại diện bởi chữ 'w', gõ bằng tổ hợp phím **F**. Bộ gõ sẽ tự động quyết định dùng 'o' hay 'u' dựa vào nguyên âm chính đi trước (ví dụ: 'a' + 'w'/'F' -> "ao", nhưng 'ê' + 'w'/'F' -> "êu", 'ă' + 'w'/'F' -> "au").
+    * Âm cuối **i/y** được đại diện bởi chữ 'j', gõ bằng tổ hợp phím **FP**. Bộ gõ sẽ tự động quyết định dùng 'i' hay 'y' dựa vào nguyên âm chính đi trước (ví dụ: 'a' + 'j'/'FP' -> "ai", nhưng 'ă' + 'j'/'FP' -> "ay", 'â' + 'j'/'FP' -> "ây").
     * *Ví dụ:* Trong "bàn", phụ âm cuối là **n** (L). Trong "thích", phụ âm cuối là **ch** (RB). Trong "sông", phụ âm cuối là **ng** (G). Trong "kịp", phụ âm cuối là **p** (P). Trong "tay", âm cuối là **y** (dùng 'j'/FP kết hợp nguyên âm 'ă'/AE). Trong "tao", âm cuối là **o** (dùng 'w'/F kết hợp nguyên âm 'a'/A). Âm tiết "ba" không có phụ âm cuối.
 
 3.  **Nguyên âm chính:** Là hạt nhân của âm tiết, có thể là nguyên âm đơn (a, ă, â, e, ê, i, o, ô, ơ, u, ư, y) hoặc nguyên âm đôi/ba (ai, ao, ưa, iê/ia, uô/ua, ươ/ưa,...). Khi tách, cần xác định nguyên âm gốc (không kèm dấu thanh). Lưu ý các biến thể như iê/ia, uô/ua, ươ/ưa phụ thuộc vào việc có phụ âm cuối hay không.
