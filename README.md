@@ -7,4 +7,4 @@ Bộ gõ này lấy cảm hứng cực mạnh từ https://github.com/user202729
 
 Sau khi cài hai thứ này xong, tải file parse.py về rồi nạp vào.
 
-Cơ chế ráp vần của bộ gõ này tuân theo quy tắc chính tả tiếng Việt.
+Cơ chế ráp vần của bộ gõ này tuân theo quy tắc chính tả tiếng Việt. Để gõ một âm tiết, ta cần tách nó thành phụ âm đầu, âm đệm, nguyên âm, phụ âm cuối và thanh. Sau khi tách các phần xong, ta có thể xác định tổ hợp phím cần bấm.
