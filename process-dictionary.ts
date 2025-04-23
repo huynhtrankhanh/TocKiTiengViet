@@ -473,9 +473,6 @@ const processWord = (x: string): string | undefined => {
         throw new Error("you've been bamboozled");
     }
     type VowelClass = "a" | "i" | "o" | "e";
-    /*     "OEU": "iê/ia", "AEU": "ua/uô", "AOE": "ưa/ươ", "AOU": "ư", "OU": "ơ",
-    "OE": "ô", "O": "o", "AU": "ê", "E": "e", "EU": "i", "A": "a",
-    "AE": "ă", "AO": "â", "U": "u", "AOEU": "y", */
     const getVowelClass = (x: Parsed): VowelClass => {
         if (x.onGlide && x.initial !== "k") return "o";
         if (x.vowel === "iê/ia" || x.vowel === "i" || x.vowel === "y") return "i";
