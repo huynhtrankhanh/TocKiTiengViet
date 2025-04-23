@@ -473,9 +473,16 @@ const processWord = (x: string): string | undefined => {
         throw new Error("you've been bamboozled");
     }
     type VowelClass = "a" | "i" | "o" | "e";
+    /*     "OEU": "iê/ia", "AEU": "ua/uô", "AOE": "ưa/ươ", "AOU": "ư", "OU": "ơ",
+    "OE": "ô", "O": "o", "AU": "ê", "E": "e", "EU": "i", "A": "a",
+    "AE": "ă", "AO": "â", "U": "u", "AOEU": "y", */
     const getVowelClass = (x: Parsed): VowelClass => {
         if (x.onGlide && x.initial !== "k") return "o";
-        // do normal processing
+        if (x.vowel === "iê/ia" || x.vowel === "i" || x.vowel === "y") return "i";
+        if (x.vowel === "ua/uô" || x.vowel === "ưa/ươ" || x.vowel === "ư" || x.vowel === "u" || x.vowel === "o" || x.vowel === "ô" || x.vowel === "ơ") return "o";
+        if (x.vowel === "a" || x.vowel === "ă" || x.vowel === "â") return "a";
+        if (x.vowel === "e" || x.vowel === "ê") return "e";
+        throw new Error("ouch");
     };
     type Initial = "b" | "c" | "ch" | "d" | "đ" | "ph" | "g" | "h" | "gi" | "kh" | "l" | "m" | "n" | "nh" | "ng" | "p" | "r" | "s" | "t" | "th" | "tr" | "v" | "x" | "qu";
     const getInitial = (x: Parsed): Initial => {
@@ -483,4 +490,5 @@ const processWord = (x: string): string | undefined => {
         if (x.initial === "c" && x.onGlide) return "qu";
         return x.initial as Initial;
     }
+    // now we have enough information to build the outline for the syllable
 }
