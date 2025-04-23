@@ -507,7 +507,20 @@ const processWord = (x: string): string | undefined => {
             })()
         };
     };
-    console.log(getOutline(parsedA), getOutline(parsedB));
-    return;
+    const helpers = (outline: Outline) => {
+        const a = (m: number, x: string): string => (outline.consonant >> m & 1) !== 0 ? x : "";
+        const b = (m: number, x: string): string => (outline.tone >> m & 1) !== 0 ? x : "";
+        const c = (m: number, x: string): string => (outline.vowel >> m & 1) !== 0 ? x : "";
+        return { a, b, c };
+    }
+    const leftHand = (() => {
+        const { a, b, c } = helpers(getOutline(parsedA));
+        return a(0, "#") + a(1, "S") + a(2, "T") + b(0, "K") + a(3, "P") + b(1, "W") + a(4, "H") + b(2, "R") + c(0, "A") + c(1, "O");
+    })();
+    const rightHand = (() => {
+        const { a, b, c } = helpers(getOutline(parsedB));
+        return c(1, "E") + c(0, "U") + a(4, "F") + b(2, "R") + a(3, "P") + b(1, "B") + a(2, "L") + b(0, "G") + a(0, "T") + a(1, "S");
+    })();
+    return leftHand + "*" + rightHand;
 }
 processWord("tham quan")
