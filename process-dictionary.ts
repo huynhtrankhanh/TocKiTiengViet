@@ -489,5 +489,12 @@ const processWord = (x: string): string | undefined => {
     }
     // now we have enough information to build the outline for the syllable
     // despite the "number" type these are actually bitmaps
+    // for consonant:
+    // 0 2 3 4
+    // 1
+    // for tone:
+    //   0 1 2
+    // for vowel:
+    // 0 1
     type Outline = { consonant: number, tone: number, vowel: number };
 }
