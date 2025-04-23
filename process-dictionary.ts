@@ -144,143 +144,98 @@ function parse(stroke: string): Parsed | null {
 }
 
 function assemble(parsed: Parsed): string {
-    const getInitial = (): string => {
-        const f = ["a", "ă", "â", "o", "ô", "ơ", "u", "ư", "ua/uô", "ưa/ươ"].includes(parsed.vowel);
-        switch (parsed.initialConsonant) {
-            case "ng/ngh": return (parsed.onGlide || f) ? "ng" : "ngh";
-            case "g":      return (parsed.onGlide || f) ? "g" : "gh";
-            case "gi":     return (!parsed.onGlide && parsed.vowel === "i") ? "g" : "gi";
-            case "c":      return parsed.onGlide ? "q" : (f ? "c" : "k");
-            default:       return parsed.initialConsonant;
-        }
-    };
-
-    const getMiddle = (): string => {
-        const applyTone = (baseVowel: string): string => {
-             if (toneAccents[baseVowel] && toneAccents[baseVowel][parsed.tone] !== undefined) {
-                return toneAccents[baseVowel][parsed.tone];
-             }
-             // console.warn(`Applying tone: Vowel "${baseVowel}" or tone "${parsed.tone}" not found in toneAccents map. Using base vowel.`);
-             return baseVowel;
-        };
-
-        switch (parsed.vowel) {
-            case "iê/ia":
-                if (parsed.initialConsonant === "") {
-                    return (parsed.onGlide ? "uy" : "y") + applyTone("ê");
-                }
-                if (parsed.onGlide) {
-                    return "uy" + (parsed.finalConsonant === "" ? applyTone("a") : applyTone("ê"));
-                }
-                return parsed.finalConsonant === "" ? (applyTone("i") + "a") : ("i" + applyTone("ê"));
-
-            case "ua/uô":
-                return parsed.finalConsonant === "" ? (applyTone("u") + "a") : ("u" + applyTone("ô"));
-
-            case "ưa/ươ":
-                 return parsed.finalConsonant === "" ? (applyTone("ư") + "a") : ("ư" + applyTone("ơ"));
-
-            case "i":
-                if (parsed.onGlide) {
-                    const initialIsQ = getInitial() === 'q';
-                    if (parsed.finalConsonant === "") {
-                         return initialIsQ ? ("u" + applyTone("y")) : (applyTone("u") + "y");
-                    } else {
-                         return "u" + applyTone("y");
-                    }
-                }
-                // Special case: gi + i -> gi (tone on i)
-                 if (getInitial() === 'g' && !parsed.onGlide) {
-                     return applyTone('i'); // Tone applied to the 'i'
-                 }
-                 return applyTone("i");
-
-
-            case "ă":
-                if (["w", "j"].includes(parsed.finalConsonant)) {
-                    const glidePrefix = parsed.onGlide ? (getInitial() === 'q' ? "u" : "o") : "";
-                    return glidePrefix + applyTone("a");
-                }
-                if (parsed.onGlide) {
-                     return (getInitial() === 'q' ? 'u' : 'o') + applyTone('ă');
-                }
-                return applyTone("ă");
-
-            case "â": // e.g., quâ -> Q + u + â
-            case "ê": // e.g., quê -> Q + u + ê
-                 if (parsed.onGlide) {
-                      // If 'c' initial becomes 'q', glide is 'u'. If other initial, glide is 'o'.
-                     const glide = getInitial() === 'q' ? 'u' : 'o';
-                     return glide + applyTone(parsed.vowel);
-                 }
-                 return applyTone(parsed.vowel);
-
-             default: // Other vowels like a, o, ô, ơ, u, ư, y
-                 if (parsed.onGlide) {
-                     const glide = getInitial() === 'q' ? 'u' : 'o';
-                     // Apply tone to the main vowel part
-                     // For oa, oe, uy -> tone is on a, e, y
-                     if ((glide === 'o' && ['a', 'e'].includes(parsed.vowel)) || (glide === 'u' && parsed.vowel === 'y')) {
-                         // Check final consonant: oà vs oai
-                         if (parsed.finalConsonant === '') {
-                             return applyTone(glide) + parsed.vowel; // Incorrect? Should be oà, oè, uỳ
-                         } else {
-                            // For cases like oanh, uyên, oach...
-                            return glide + applyTone(parsed.vowel);
-                         }
-                     }
-                     // Handle cases like quý, quá, quơ...
-                     return glide + applyTone(parsed.vowel);
-
-                 }
-                 // No glide, apply tone directly
-                 return applyTone(parsed.vowel);
-        }
-    };
-
-    const getFinal = (): string => {
-        switch (parsed.finalConsonant) {
-            case "w": // Becomes 'u' or 'o'
-                // Based on preceding vowel according to Vietnamese rules
-                // i/y, iê, u/uy, uô, ư/ươ, ưu -> ends in 'u' sound written 'u' or 'y'
-                // Simple rule: if vowel ends with front/high-ish sound -> u, else -> o
-                if (["i", "y", "iê/ia", "u", "ư", "ưa/ươ", "ê"].includes(parsed.vowel)) return "u";
-                 // ă + w -> au (e.g. lau)
-                 if (parsed.vowel === 'ă') return "u";
-                  // â + w -> âu (e.g. lâu)
-                 if (parsed.vowel === 'â') return "u";
-                // o/ô/ơ + w -> oo/ôo/ơo -> ou/âu/ơu (actually o/ô/ơ + u)
-                 return "o"; // Default rule like ao, eo
-
-            case "j": // Becomes 'i' or 'y'
-                 // ă + j -> ay (e.g. lay)
-                 if (parsed.vowel === 'ă') return "y";
-                 // â + j -> ây (e.g. tây)
-                 if (parsed.vowel === 'â') return "y";
-                 // Others end in 'i'
-                 return "i"; // e.g, oi, ôi, ơi, ui, ưi, ai, ei
-            default:
-                return parsed.finalConsonant;
-        }
-    };
-
-    // Combine parts
-    const initialPart = getInitial();
-    const middlePart = getMiddle();
-    const finalPart = getFinal();
-
-    // Post-processing for 'gi' + 'i' case -> 'gi'
-    if (initialPart === 'g' && middlePart === toneAccents['i'][parsed.tone] && finalPart === '') {
-        return 'g' + toneAccents['i'][parsed.tone];
+  const initial = (): string => {
+    const f = ["a", "ă", "â", "o", "ô", "ơ", "u", "ư", "ua/uô", "ưa/ươ"].includes(parsed.vowel);
+    switch (parsed.initialConsonant) {
+      case "ng/ngh":
+        return (parsed.onGlide || f) ? "ng" : "ngh";
+      case "g":
+        return (parsed.onGlide || f) ? "g" : "gh";
+      case "gi":
+        return (!parsed.onGlide && parsed.vowel === "i") ? "g" : "gi";
+      case "c":
+        if (parsed.onGlide) return "q";
+        return f ? "c" : "k";
+      default:
+        return parsed.initialConsonant;
     }
-     // Post-processing qu + middle starting with 'u' -> drop the 'u' from middle
-     if (initialPart === 'q' && middlePart.startsWith('u')) {
-        // E.g. q + uy... -> quy... not quuy
-        return initialPart + middlePart.substring(1) + finalPart;
-     }
+  };
 
+  const middle = (): string => {
+    if (parsed.vowel === "iê/ia") {
+      if (parsed.initialConsonant === "") {
+        return (parsed.onGlide ? "uy" : "y") + toneAccents["ê"][parsed.tone];
+      }
+      if (parsed.onGlide) {
+        return "uy" + toneAccents[parsed.finalConsonant === "" ? "a" : "ê"][parsed.tone];
+      }
+      if (parsed.finalConsonant === "") {
+        return toneAccents["i"][parsed.tone] + "a";
+      }
+      return "i" + toneAccents["ê"][parsed.tone];
+    }
 
-    return initialPart + middlePart + finalPart;
+    if (parsed.vowel === "ua/uô") {
+      return parsed.finalConsonant === ""
+        ? toneAccents["u"][parsed.tone] + "a"
+        : "u" + toneAccents["ô"][parsed.tone];
+    }
+
+    if (parsed.vowel === "ưa/ươ") {
+      return parsed.finalConsonant === ""
+        ? toneAccents["ư"][parsed.tone] + "a"
+        : "ư" + toneAccents["ơ"][parsed.tone];
+    }
+
+    if (parsed.vowel === "i") {
+      if (parsed.onGlide) {
+        if (parsed.finalConsonant === "") {
+          return parsed.initialConsonant !== "c"
+            ? toneAccents["u"][parsed.tone] + "y"
+            : "u" + toneAccents["y"][parsed.tone];
+        }
+        return "u" + toneAccents["y"][parsed.tone];
+      }
+      return toneAccents["i"][parsed.tone];
+    }
+
+    if (parsed.vowel === "ă" && ["w", "j"].includes(parsed.finalConsonant)) {
+      return (parsed.onGlide
+        ? (parsed.initialConsonant === "c" ? "u" : "o")
+        : ""
+      ) + toneAccents["a"][parsed.tone];
+    }
+
+    if (["â", "ê"].includes(parsed.vowel) && parsed.onGlide) {
+      return "u" + toneAccents[parsed.vowel][parsed.tone];
+    }
+
+    if (parsed.initialConsonant === "c" && parsed.onGlide) {
+      return "u" + toneAccents[parsed.vowel][parsed.tone];
+    }
+
+    if (parsed.onGlide) {
+      return parsed.finalConsonant === ""
+        ? toneAccents["o"][parsed.tone] + parsed.vowel
+        : "o" + toneAccents[parsed.vowel][parsed.tone];
+    }
+
+    return toneAccents[parsed.vowel][parsed.tone];
+  };
+
+  const final = (): string => {
+    if (parsed.finalConsonant === "w") {
+      return ["iê/ia", "ư", "ê", "u", "ă", "â", "i"].includes(parsed.vowel)
+        ? "u"
+        : "o";
+    }
+    if (parsed.finalConsonant === "j") {
+      return ["ă", "â"].includes(parsed.vowel) ? "y" : "i";
+    }
+    return parsed.finalConsonant;
+  };
+
+  return `${initial()}${middle()}${final()}`;
 }
 
 
@@ -459,9 +414,10 @@ const processWord = (x: string): string | undefined => {
     if (strokeB === undefined) return;
     const parsedB = parse(strokeB)!;
     // 8 tone system, this is not the ordinary linguistic analysis of Vietnamese tones
-    type Tone = "sắc" | "huyền" | "hỏi" | "ngã" | "nặng" | "ách" | "ạch";
+    type Tone = "ngang" | "sắc" | "huyền" | "hỏi" | "ngã" | "nặng" | "ách" | "ạch";
     const getTone = (x: Parsed): Tone => {
         if (x.tone === "huyền" || x.tone === "hỏi" || x.tone === "ngã") return x.tone;
+        if (x.tone === "") return "ngang";
         if (x.tone === "sắc") {
             if (x.final === "p" || x.final === "t" || x.final === "ch" || x.final === "c") return "ách";
             return "sắc";
@@ -474,7 +430,7 @@ const processWord = (x: string): string | undefined => {
     }
     type VowelClass = "a" | "i" | "o" | "e";
     const getVowelClass = (x: Parsed): VowelClass => {
-        if (x.onGlide && x.initial !== "k") return "o";
+        if (x.onGlide && x.initialConsonant !== "c") return "o";
         if (x.vowel === "iê/ia" || x.vowel === "i" || x.vowel === "y") return "i";
         if (x.vowel === "ua/uô" || x.vowel === "ưa/ươ" || x.vowel === "ư" || x.vowel === "u" || x.vowel === "o" || x.vowel === "ô" || x.vowel === "ơ") return "o";
         if (x.vowel === "a" || x.vowel === "ă" || x.vowel === "â") return "a";
@@ -483,9 +439,9 @@ const processWord = (x: string): string | undefined => {
     };
     type Initial = "b" | "c" | "ch" | "d" | "đ" | "ph" | "g" | "h" | "gi" | "kh" | "l" | "m" | "n" | "nh" | "ng" | "p" | "r" | "s" | "t" | "th" | "tr" | "v" | "x" | "qu";
     const getInitial = (x: Parsed): Initial => {
-        if (x.initial === "ng/ngh") return "ng";
-        if (x.initial === "c" && x.onGlide) return "qu";
-        return x.initial as Initial;
+        if (x.initialConsonant === "ng/ngh") return "ng";
+        if (x.initialConsonant === "c" && x.onGlide) return "qu";
+        return x.initialConsonant as Initial;
     }
     // now we have enough information to build the outline for the syllable
     // despite the "number" type these are actually bitmaps
@@ -497,7 +453,7 @@ const processWord = (x: string): string | undefined => {
     // for vowel:
     // 0 1
     type Outline = { consonant: number, tone: number, vowel: number };
-    const getOutline = (x : Parsed): Outline => {
+    const getOutline = (parsed: Parsed): Outline => {
         const initial = getInitial(parsed);
         const tone = getTone(parsed);
         const vowel = getVowelClass(parsed);
@@ -536,6 +492,7 @@ const processWord = (x: string): string | undefined => {
                 if (tone === "nặng") return 6;
                 if (tone === "ách") return 5;
                 if (tone === "ạch") return 7;
+                if (tone === "ngang") return 0;
             })(),
             vowel: (() => {
                 if (vowel === "a") return 1;
@@ -545,4 +502,6 @@ const processWord = (x: string): string | undefined => {
             })()
         };
     };
+    console.log(getOutline(parsedA), getOutline(parsedB));
 }
+processWord("tham quan")
