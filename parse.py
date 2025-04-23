@@ -1,513 +1,299 @@
-// --- Type Definitions ---
-
-interface Parsed {
-    onGlide: boolean;
-    initialConsonant: string; // Vietnamese phoneme/letter
-    vowel: string;          // Vietnamese phoneme/letter(s)
-    finalConsonant: string; // Vietnamese phoneme/letter
-    tone: string;           // Vietnamese tone name (e.g., "sắc")
+stenography_map = {
+    # Initial Consonants
+    "PW": "b",
+    "K": "c",
+    "KH": "ch",
+    "KWR": "d",
+    "TK": "đ",
+    "TP": "ph",
+    "TKPW": "g",
+    "H": "h",
+    "KWH": "gi",
+    "KHR": "kh",
+    "HR": "l",
+    "PH": "m",
+    "TPH": "n",
+    "TPR": "nh",
+    "TPW": "ng/ngh",
+    "P": "p",
+    "R": "r",
+    "KP": "s",
+    "T": "t",
+    "TH": "th",
+    "TR": "tr",
+    "W": "v",
+    "WR": "x",
 }
 
-// --- Constants (Maps and Tone Accents) ---
-// (Maps remain the same as before)
-
-const stenographyMap: { [key: string]: string } = {
-    "PW": "b", "K": "c", "KH": "ch", "KWR": "d", "TK": "đ", "TP": "ph",
-    "TKPW": "g", "H": "h", "KWH": "gi", "KHR": "kh", "HR": "l", "PH": "m",
-    "TPH": "n", "TPR": "nh", "TPW": "ng/ngh", "P": "p", "R": "r", "KP": "s",
-    "T": "t", "TH": "th", "TR": "tr", "W": "v", "WR": "x",
-};
-
-const vowelMap: { [key: string]: string } = {
-    "OEU": "iê/ia", "AEU": "ua/uô", "AOE": "ưa/ươ", "AOU": "ư", "OU": "ơ",
-    "OE": "ô", "O": "o", "AU": "ê", "E": "e", "EU": "i", "A": "a",
-    "AE": "ă", "AO": "â", "U": "u", "AOEU": "y",
-};
-
-const finalMap: { [key: string]: string } = {
-    "FP": "j", "F": "w", "P": "p", "R": "t", "BG": "c", "RB": "ch",
-    "PB": "nh", "L": "n", "PL": "m", "G": "ng",
-};
-
-const toneMap: { [key: string]: string } = {
-    "T": "sắc", "S": "huyền", "D": "hỏi", "TS": "ngã", "Z": "nặng",
-};
-
-const toneAccents: { [key: string]: { [key: string]: string } } = {
-    "a": { "": "a", "sắc": "á", "huyền": "à", "hỏi": "ả", "ngã": "ã", "nặng": "ạ" },
-    "ă": { "": "ă", "sắc": "ắ", "huyền": "ằ", "hỏi": "ẳ", "ngã": "ẵ", "nặng": "ặ" },
-    "â": { "": "â", "sắc": "ấ", "huyền": "ầ", "hỏi": "ẩ", "ngã": "ẫ", "nặng": "ậ" },
-    "e": { "": "e", "sắc": "é", "huyền": "è", "hỏi": "ẻ", "ngã": "ẽ", "nặng": "ẹ" },
-    "ê": { "": "ê", "sắc": "ế", "huyền": "ề", "hỏi": "ể", "ngã": "ễ", "nặng": "ệ" },
-    "i": { "": "i", "sắc": "í", "huyền": "ì", "hỏi": "ỉ", "ngã": "ĩ", "nặng": "ị" },
-    "o": { "": "o", "sắc": "ó", "huyền": "ò", "hỏi": "ỏ", "ngã": "õ", "nặng": "ọ" },
-    "ô": { "": "ô", "sắc": "ố", "huyền": "ồ", "hỏi": "ổ", "ngã": "ỗ", "nặng": "ộ" },
-    "ơ": { "": "ơ", "sắc": "ớ", "huyền": "ờ", "hỏi": "ở", "ngã": "ỡ", "nặng": "ợ" },
-    "u": { "": "u", "sắc": "ú", "huyền": "ù", "hỏi": "ủ", "ngã": "ũ", "nặng": "ụ" },
-    "ư": { "": "ư", "sắc": "ứ", "huyền": "ừ", "hỏi": "ử", "ngã": "ữ", "nặng": "ự" },
-    "y": { "": "y", "sắc": "ý", "huyền": "ỳ", "hỏi": "ỷ", "ngã": "ỹ", "nặng": "ỵ" },
-};
-
-const digitToKey: { [key: string]: string } = {
-    "1": "S", "2": "T", "3": "P", "4": "H", "5": "A",
-    "0": "O", "6": "F", "7": "P", "8": "L", "9": "T",
-};
-
-
-// --- Helper Functions ---
-// (parse, assemble, denumeralizeStroke, capitalize remain the same as before)
-
-function parse(stroke: string): Parsed | null {
-    let currentStroke = stroke;
-    const onGlide = currentStroke.startsWith("S");
-    if (onGlide) {
-        currentStroke = currentStroke.substring(1);
-    }
-
-    let initialConsonantSteno = "";
-    let initialConsonant = "";
-    let vowelSteno = "";
-    let vowel = "";
-    let finalConsonantSteno = "";
-    let finalConsonant = "";
-    let toneSteno = "";
-    let tone = "";
-
-    let foundInitial = false;
-    const initialKeys = Object.keys(stenographyMap).sort((a, b) => b.length - a.length);
-    for (const key of initialKeys) {
-        if (currentStroke.startsWith(key)) {
-            initialConsonantSteno = key;
-            initialConsonant = stenographyMap[key];
-            currentStroke = currentStroke.substring(key.length);
-            foundInitial = true;
-            break;
-        }
-    }
-    if (!foundInitial && currentStroke.length > 0 && !(Object.keys(vowelMap).some(vKey => currentStroke.startsWith(vKey)))) {
-        // If no initial consonant found AND the remaining doesn't start with a vowel key, it's likely invalid unless empty
-    } else if (!foundInitial) {
-        initialConsonant = ""; // Valid case: no initial consonant
-    }
-
-
-    let foundVowel = false;
-    const vowelKeys = Object.keys(vowelMap).sort((a, b) => b.length - a.length);
-    for (const key of vowelKeys) {
-        if (currentStroke.startsWith(key)) {
-            vowelSteno = key;
-            vowel = vowelMap[key];
-            currentStroke = currentStroke.substring(key.length);
-            foundVowel = true;
-            break;
-        }
-    }
-    if (!foundVowel) {
-         // console.error(`Failed to parse vowel for stroke: ${stroke}, remaining: ${currentStroke}`);
-        return null; // Must have a vowel
-    }
-
-    let foundFinal = false;
-    const finalKeys = Object.keys(finalMap).sort((a, b) => b.length - a.length);
-    for (const key of finalKeys) {
-        if (currentStroke.startsWith(key)) {
-            finalConsonantSteno = key;
-            finalConsonant = finalMap[key];
-            currentStroke = currentStroke.substring(key.length);
-            foundFinal = true;
-            break;
-        }
-    }
-     if (!foundFinal) {
-        finalConsonant = ""; // Valid case: no final consonant
-    }
-
-    if (currentStroke.length > 0) {
-        if (toneMap[currentStroke] !== undefined) {
-            toneSteno = currentStroke;
-            tone = toneMap[currentStroke];
-            currentStroke = "";
-        } else {
-            // console.error(`Invalid remaining characters (tone?) for stroke: ${stroke}, remaining: ${currentStroke}`);
-            return null; // Invalid ending
-        }
-    } else {
-        tone = ""; // No tone specified
-    }
-
-    if (currentStroke.length !== 0) {
-         // console.error(`Characters remaining after parsing stroke: ${stroke}, remaining: ${currentStroke}`);
-        return null;
-    }
-
-    return { onGlide, initialConsonant, vowel, finalConsonant, tone };
+vowel_map = {
+    "OEU": "iê/ia",
+    "AEU": "ua/uô",
+    "AOE": "ưa/ươ",
+    "AOU": "ư",
+    "OU": "ơ",
+    "OE": "ô",
+    "O": "o",
+    "AU": "ê",
+    "E": "e",
+    "EU": "i",
+    "A": "a",
+    "AE": "ă",
+    "AO": "â",
+    "U": "u",
+    "AOEU": "y",
 }
 
-function assemble(parsed: Parsed): string {
-  const initial = (): string => {
-    const f = ["a", "ă", "â", "o", "ô", "ơ", "u", "ư", "ua/uô", "ưa/ươ"].includes(parsed.vowel);
-    switch (parsed.initialConsonant) {
-      case "ng/ngh":
-        return (parsed.onGlide || f) ? "ng" : "ngh";
-      case "g":
-        return (parsed.onGlide || f) ? "g" : "gh";
-      case "gi":
-        return (!parsed.onGlide && parsed.vowel === "i") ? "g" : "gi";
-      case "c":
-        if (parsed.onGlide) return "q";
-        return f ? "c" : "k";
-      default:
-        return parsed.initialConsonant;
-    }
-  };
+final_map = {
+    "FP": "j",
+    "F": "w",
+    "P": "p",
+    "R": "t",
+    "BG": "c",
+    "RB": "ch",
+    "PB": "nh",
+    "L": "n",
+    "PL": "m",
+    "G": "ng",
+}
 
-  const middle = (): string => {
-    if (parsed.vowel === "iê/ia") {
-      if (parsed.initialConsonant === "") {
-        return (parsed.onGlide ? "uy" : "y") + toneAccents["ê"][parsed.tone];
-      }
-      if (parsed.onGlide) {
-        return "uy" + toneAccents[parsed.finalConsonant === "" ? "a" : "ê"][parsed.tone];
-      }
-      if (parsed.finalConsonant === "") {
-        return toneAccents["i"][parsed.tone] + "a";
-      }
-      return "i" + toneAccents["ê"][parsed.tone];
-    }
+tone_map = {
+    "T": "sắc",
+    "S": "huyền",
+    "D": "hỏi",
+    "TS": "ngã",
+    "Z": "nặng",
+}
 
-    if (parsed.vowel === "ua/uô") {
-      return parsed.finalConsonant === ""
-        ? toneAccents["u"][parsed.tone] + "a"
-        : "u" + toneAccents["ô"][parsed.tone];
-    }
-
-    if (parsed.vowel === "ưa/ươ") {
-      return parsed.finalConsonant === ""
-        ? toneAccents["ư"][parsed.tone] + "a"
-        : "ư" + toneAccents["ơ"][parsed.tone];
-    }
-
-    if (parsed.vowel === "i") {
-      if (parsed.onGlide) {
-        if (parsed.finalConsonant === "") {
-          return parsed.initialConsonant !== "c"
-            ? toneAccents["u"][parsed.tone] + "y"
-            : "u" + toneAccents["y"][parsed.tone];
-        }
-        return "u" + toneAccents["y"][parsed.tone];
-      }
-      return toneAccents["i"][parsed.tone];
-    }
-
-    if (parsed.vowel === "ă" && ["w", "j"].includes(parsed.finalConsonant)) {
-      return (parsed.onGlide
-        ? (parsed.initialConsonant === "c" ? "u" : "o")
-        : ""
-      ) + toneAccents["a"][parsed.tone];
-    }
-
-    if (["â", "ê"].includes(parsed.vowel) && parsed.onGlide) {
-      return "u" + toneAccents[parsed.vowel][parsed.tone];
-    }
-
-    if (parsed.initialConsonant === "c" && parsed.onGlide) {
-      return "u" + toneAccents[parsed.vowel][parsed.tone];
-    }
-
-    if (parsed.onGlide) {
-      return parsed.finalConsonant === ""
-        ? toneAccents["o"][parsed.tone] + parsed.vowel
-        : "o" + toneAccents[parsed.vowel][parsed.tone];
-    }
-
-    return toneAccents[parsed.vowel][parsed.tone];
-  };
-
-  const final = (): string => {
-    if (parsed.finalConsonant === "w") {
-      return ["iê/ia", "ư", "ê", "u", "ă", "â", "i"].includes(parsed.vowel)
-        ? "u"
-        : "o";
-    }
-    if (parsed.finalConsonant === "j") {
-      return ["ă", "â"].includes(parsed.vowel) ? "y" : "i";
-    }
-    return parsed.finalConsonant;
-  };
-
-  return `${initial()}${middle()}${final()}`;
+tone_accents = {
+    "a": {"": "a", "sắc": "á", "huyền": "à", "hỏi": "ả", "ngã": "ã", "nặng": "ạ"},
+    "ă": {"": "ă", "sắc": "ắ", "huyền": "ằ", "hỏi": "ẳ", "ngã": "ẵ", "nặng": "ặ"},
+    "â": {"": "â", "sắc": "ấ", "huyền": "ầ", "hỏi": "ẩ", "ngã": "ẫ", "nặng": "ậ"},
+    "e": {"": "e", "sắc": "é", "huyền": "è", "hỏi": "ẻ", "ngã": "ẽ", "nặng": "ẹ"},
+    "ê": {"": "ê", "sắc": "ế", "huyền": "ề", "hỏi": "ể", "ngã": "ễ", "nặng": "ệ"},
+    "i": {"": "i", "sắc": "í", "huyền": "ì", "hỏi": "ỉ", "ngã": "ĩ", "nặng": "ị"},
+    "o": {"": "o", "sắc": "ó", "huyền": "ò", "hỏi": "ỏ", "ngã": "õ", "nặng": "ọ"},
+    "ô": {"": "ô", "sắc": "ố", "huyền": "ồ", "hỏi": "ổ", "ngã": "ỗ", "nặng": "ộ"},
+    "ơ": {"": "ơ", "sắc": "ớ", "huyền": "ờ", "hỏi": "ở", "ngã": "ỡ", "nặng": "ợ"},
+    "u": {"": "u", "sắc": "ú", "huyền": "ù", "hỏi": "ủ", "ngã": "ũ", "nặng": "ụ"},
+    "ư": {"": "ư", "sắc": "ứ", "huyền": "ừ", "hỏi": "ử", "ngã": "ữ", "nặng": "ự"},
+    "y": {"": "y", "sắc": "ý", "huyền": "ỳ", "hỏi": "ỷ", "ngã": "ỹ", "nặng": "ỵ"},
 }
 
 
-function denumeralizeStroke(stroke: string): string {
-    if (stroke.startsWith("#")) {
-        return stroke;
+class Parsed:
+    def __init__(self, on_glide, initial_consonant, vowel, final_consonant, tone):
+        self.on_glide = on_glide
+        self.initial_consonant = initial_consonant
+        self.vowel = vowel
+        self.final_consonant = final_consonant
+        self.tone = tone
+
+
+def parse(stroke):
+    on_glide = stroke.startswith("S")
+    if on_glide:
+        stroke = stroke[1:]
+
+    initial_consonant = ""
+    vowel = ""
+    final_consonant = ""
+    tone = ""
+
+    # Match Initial Consonant (4 -> 3 -> 2 -> 1 letter)
+    for length in range(4, 0, -1):
+        candidate = stroke[:length]
+        if candidate in stenography_map:
+            initial_consonant = stenography_map[candidate]
+            stroke = stroke[length:]
+            survived = True
+            break
+
+    survived = False
+    # Match Vowel (4 -> 3 -> 2 -> 1 letter)
+    for length in range(4, 0, -1):
+        candidate = stroke[:length]
+        if candidate in vowel_map:
+            vowel = vowel_map[candidate]
+            stroke = stroke[length:]
+            survived = True
+            break
+    if not survived:
+        raise KeyError("")
+
+    # Match Final Consonant (2 -> 1 letter)
+    for length in range(2, 0, -1):
+        candidate = stroke[:length]
+        if candidate in final_map:
+            final_consonant = final_map[candidate]
+            stroke = stroke[length:]
+            survived = True
+            break
+
+    # Match Tone (if anything left, it must be a tone)
+    survived = stroke == ""
+    if stroke in tone_map:
+        tone = tone_map[stroke]
+        stroke = ""
+        survived = True
+
+    if not survived:
+        raise KeyError("")
+
+    return Parsed(on_glide, initial_consonant, vowel, final_consonant, tone)
+
+
+def denumeralize_stroke(stroke):
+    """
+    Denumeralizes a stroke by converting digits to their Plover key equivalents
+    and prepending the '#' character, ONLY if the input stroke contains digits
+    and does NOT already start with '#'. Otherwise, return the input as is.
+
+    For example:
+        12A -> #STA  (Numeralized input with digits)
+        #ABC -> #ABC (Already denumeralized)
+        ABC  -> ABC   (No digits, not numeralized)
+        word -> word  (No digits, not numeralized)
+
+    Args:
+        stroke: The stroke string, possibly "numeralized" (e.g., "12A"),
+                already "denumeralized" (e.g., "#ABC"), or not numeralized
+                (e.g., "ABC").
+
+    Returns:
+        The "denumeralized" stroke string (e.g., "#STA", "#ABC", or "ABC").
+    """
+    if stroke.startswith("#"):
+        return stroke  # Already denumeralized, return as is
+
+    has_digit = False
+    for char in stroke:
+        if char.isdigit():
+            has_digit = True
+            break  # No need to check further if we found a digit
+
+    if not has_digit:
+        return stroke  # No digits found, return as is
+
+    digit_to_key = {
+        "1": "S",
+        "2": "T",
+        "3": "P",
+        "4": "H",
+        "5": "A",
+        "0": "O",
+        "6": "F",
+        "7": "P",
+        "8": "L",
+        "9": "T",
     }
-    let hasDigit = false;
-    for (const char of stroke) {
-        if (/\d/.test(char)) {
-            hasDigit = true;
-            break;
-        }
-    }
-    if (!hasDigit) {
-        return stroke;
-    }
-    let ploverStroke = "#";
-    for (const char of stroke) {
-        ploverStroke += digitToKey[char] ?? char;
-    }
-    return ploverStroke;
-}
-
-function capitalize(str: string): string {
-    if (!str) return "";
-    return str.charAt(0).toUpperCase() + str.slice(1);
-}
+    plover_stroke = "#"
+    for char in stroke:
+        if char in digit_to_key:
+            plover_stroke += digit_to_key[char]
+        else:
+            plover_stroke += char  # Keep non-digit characters as they are
+    return plover_stroke
 
 
-// --- SyllableParseinator Class ---
+def assemble(parsed):
+    def initial():
+        f = parsed.vowel in ["a", "ă", "â", "o", "ô", "ơ", "u", "ư", "ua/uô", "ưa/ươ"]
+        if parsed.initial_consonant == "ng/ngh":
+            return "ng" if parsed.on_glide or f else "ngh"
+        if parsed.initial_consonant == "g":
+            return "g" if parsed.on_glide or f else "gh"
+        if parsed.initial_consonant == "gi":
+            return "g" if not parsed.on_glide and parsed.vowel == "i" else "gi"
+        if parsed.initial_consonant == "c":
+            return "q" if parsed.on_glide else "c" if f else "k"
+        return parsed.initial_consonant
 
-class SyllableParseinator {
-    // Forward cache: stroke -> syllable
-    private forwardCache: Map<string, string>;
-    // Reverse cache: syllable -> shortest_stroke
-    private reverseCache: Map<string, string>;
-    public readonly longestKey = 1;
+    def middle():
+        if parsed.vowel == "iê/ia":
+            if parsed.initial_consonant == "":
+                return ("uy" if parsed.on_glide else "y") + tone_accents["ê"][
+                    parsed.tone
+                ]
+            if parsed.on_glide:
+                if parsed.final_consonant == "":
+                    return "uy" + tone_accents["a"][parsed.tone]
+                return "uy" + tone_accents["ê"][parsed.tone]
+            if parsed.final_consonant == "":
+                return tone_accents["i"][parsed.tone] + "a"
+            return "i" + tone_accents["ê"][parsed.tone]
+        if parsed.vowel == "ua/uô":
+            return (
+                tone_accents["u"][parsed.tone] + "a"
+                if parsed.final_consonant == ""
+                else "u" + tone_accents["ô"][parsed.tone]
+            )
+        if parsed.vowel == "ưa/ươ":
+            return (
+                tone_accents["ư"][parsed.tone] + "a"
+                if parsed.final_consonant == ""
+                else "ư" + tone_accents["ơ"][parsed.tone]
+            )
+        if parsed.vowel == "i":
+            if parsed.on_glide:
+                return (
+                    (
+                        tone_accents["u"][parsed.tone] + "y"
+                        if parsed.initial_consonant != "c"
+                        else "u" + tone_accents["y"][parsed.tone]
+                    )
+                    if parsed.final_consonant == ""
+                    else "u" + tone_accents["y"][parsed.tone]
+                )
+            return tone_accents["i"][parsed.tone]
+        if parsed.vowel == "ă" and parsed.final_consonant in ["w", "j"]:
+            return (
+                ("u" if parsed.initial_consonant == "c" else "o")
+                if parsed.on_glide
+                else ""
+            ) + tone_accents["a"][parsed.tone]
+        if parsed.vowel in ["â", "ê"] and parsed.on_glide:
+            return "u" + tone_accents[parsed.vowel][parsed.tone]
+        if parsed.initial_consonant == "c" and parsed.on_glide:
+            return "u" + tone_accents[parsed.vowel][parsed.tone]
+        if parsed.on_glide:
+            return (
+                tone_accents["o"][parsed.tone] + parsed.vowel
+                if parsed.final_consonant == ""
+                else "o" + tone_accents[parsed.vowel][parsed.tone]
+            )
+        return tone_accents[parsed.vowel][parsed.tone]
 
-    constructor() {
-        this.forwardCache = new Map<string, string>();
-        this.reverseCache = new Map<string, string>();
-        this.initializeCaches();
-    }
+    def final():
+        if parsed.final_consonant == "w":
+            if parsed.vowel in ["iê/ia", "ư", "ê", "u", "ă", "â", "i"]:
+                return "u"
+            return "o"
+        if parsed.final_consonant == "j":
+            if parsed.vowel in ["ă", "â"]:
+                return "y"
+            return "i"
+        return parsed.final_consonant
 
-    private initializeCaches(): void {
-        console.log("Initializing syllable caches...");
-        const start = performance.now();
-        let generatedCount = 0;
-        let validForwardCount = 0;
-
-        // --- Step 1: Populate Forward Cache (stroke -> syllable) ---
-        const initialStenoKeys = ["", ...Object.keys(stenographyMap)];
-        const vowelStenoKeys = Object.keys(vowelMap);
-        const finalStenoKeys = ["", ...Object.keys(finalMap)];
-        const toneStenoKeys = ["", ...Object.keys(toneMap)];
-        const glideOptions = [false, true];
-
-        for (const useGlide of glideOptions) {
-            const glidePrefix = useGlide ? "S" : "";
-            for (const initialKey of initialStenoKeys) {
-                for (const vowelKey of vowelStenoKeys) {
-                    for (const finalKey of finalStenoKeys) {
-                        for (const toneKey of toneStenoKeys) {
-                            generatedCount++;
-                            const stroke = glidePrefix + initialKey + vowelKey + finalKey + toneKey;
-                            if (stroke === "" || stroke === "S") continue;
-
-                            try {
-                                const parsed = parse(stroke);
-                                if (parsed) {
-                                    const assembled = assemble(parsed);
-                                    if (assembled && assembled.length > 0) { // Ensure assembly is valid and not empty
-                                        this.forwardCache.set(stroke, assembled);
-                                        validForwardCount++;
-                                    }
-                                }
-                            } catch (e) {
-                                // Ignore errors during initial generation
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        console.log(`Forward cache populated. Generated: ${generatedCount}, Valid syllables: ${validForwardCount}.`);
+    return initial() + middle() + final()
 
 
-        // --- Step 2: Populate Reverse Cache (syllable -> shortest stroke) ---
-        console.log("Populating reverse cache (syllable -> shortest stroke)...");
-        for (const [stroke, syllable] of this.forwardCache.entries()) {
-            const existingStroke = this.reverseCache.get(syllable);
-            // If syllable not seen before, or current stroke is shorter than existing one
-            if (!existingStroke || stroke.length < existingStroke.length) {
-                this.reverseCache.set(syllable, stroke);
-            }
-             // Optional: Add tie-breaking logic here if needed (e.g., prefer non-glide?)
-        }
+def capitalize(x):
+    return x[0].upper() + x[1:]
 
-        const end = performance.now();
-        console.log(`Cache initialization complete. Reverse cache size: ${this.reverseCache.size}. Time: ${((end - start)/1000).toFixed(2)}s`);
-    }
 
-    /**
-     * Looks up the Vietnamese syllable corresponding to a stenography stroke.
-     * Handles denumeralization and capitalization (# prefix).
-     * @param strokes - An array containing the stenography stroke(s). Expects one stroke.
-     * @returns The Vietnamese syllable string or undefined if not found/invalid.
-     */
-    public lookup(strokes: string[]): string | undefined {
-         if (!strokes || strokes.length === 0) {
-            return undefined;
-        }
-        const rawStroke = strokes[0];
+LONGEST_KEY = 1
 
-        // Handle special cases directly
-        switch(rawStroke) {
-            case "-S": return "{^};";
-            case "-Z": return "{^}'";
-            case "-D": return "{^}[";
-            case "AO": return "{^}-{^}";
-        }
 
-        const stroke = denumeralizeStroke(rawStroke);
-
-        if (stroke.startsWith("#")) {
-            const coreStroke = stroke.substring(1);
-            const result = this.forwardCache.get(coreStroke); // Use forward cache here
-            return result ? capitalize(result) : undefined;
-        } else {
-            return this.forwardCache.get(stroke); // Use forward cache here
-        }
-    }
-
-    /**
-     * Looks up the shortest stenography stroke corresponding to a Vietnamese syllable.
-     * @param syllable - The Vietnamese syllable string (case-insensitive).
-     * @returns The shortest steno stroke or undefined if not found.
-     */
-    public reverseLookup(syllable: string): string | undefined {
-        if (!syllable) {
-            return undefined;
-        }
-        // Normalize input syllable to lowercase to match cache keys
-        const normalizedSyllable = syllable.toLowerCase();
-        return this.reverseCache.get(normalizedSyllable);
-    }
-
-     // --- Accessor methods for debugging/info ---
-     public getForwardCacheSize(): number {
-        return this.forwardCache.size;
-    }
-    public getReverseCacheSize(): number {
-        return this.reverseCache.size;
-    }
-     public static parseStroke(stroke: string): Parsed | null {
-         return parse(stroke);
-     }
-     public static assembleParsed(parsed: Parsed): string {
-         return assemble(parsed);
-     }
-}
-
-// --- Example Usage ---
-
-const mapper = new SyllableParseinator();
-
-const processWord = (x: string): string | undefined => {
-    const syllables = x.toLowerCase().split(" ");
-    if (syllables.length !== 2) return;
-    const [a, b] = syllables;
-    const strokeA = mapper.reverseLookup(a);
-    if (strokeA === undefined) return;
-    const parsedA = parse(strokeA)!;
-    const strokeB = mapper.reverseLookup(b);
-    if (strokeB === undefined) return;
-    const parsedB = parse(strokeB)!;
-    // 8 tone system, this is not the ordinary linguistic analysis of Vietnamese tones
-    type Tone = "ngang" | "sắc" | "huyền" | "hỏi" | "ngã" | "nặng" | "ách" | "ạch";
-    const getTone = (x: Parsed): Tone => {
-        if (x.tone === "huyền" || x.tone === "hỏi" || x.tone === "ngã") return x.tone;
-        if (x.tone === "") return "ngang";
-        if (x.tone === "sắc") {
-            if (x.finalConsonant === "p" || x.finalConsonant === "t" || x.finalConsonant === "ch" || x.finalConsonant === "c") return "ách";
-            return "sắc";
-        }
-        if (x.tone === "nặng") {
-            if (x.finalConsonant === "p" || x.finalConsonant === "t" || x.finalConsonant === "ch" || x.finalConsonant === "c") return "ạch";
-            return "nặng";
-        }
-        throw new Error("you've been bamboozled");
-    }
-    type VowelClass = "a" | "i" | "o" | "e";
-    const getVowelClass = (x: Parsed): VowelClass => {
-        if (x.onGlide && x.initialConsonant !== "c") return "o";
-        if (x.vowel === "iê/ia" || x.vowel === "i" || x.vowel === "y") return "i";
-        if (x.vowel === "ua/uô" || x.vowel === "ưa/ươ" || x.vowel === "ư" || x.vowel === "u" || x.vowel === "o" || x.vowel === "ô" || x.vowel === "ơ") return "o";
-        if (x.vowel === "a" || x.vowel === "ă" || x.vowel === "â") return "a";
-        if (x.vowel === "e" || x.vowel === "ê") return "e";
-        throw new Error("ouch");
-    };
-    type Initial = "b" | "c" | "ch" | "d" | "đ" | "ph" | "g" | "h" | "gi" | "kh" | "l" | "m" | "n" | "nh" | "ng" | "p" | "r" | "s" | "t" | "th" | "tr" | "v" | "x" | "qu";
-    const getInitial = (x: Parsed): Initial => {
-        if (x.initialConsonant === "ng/ngh") return "ng";
-        if (x.initialConsonant === "c" && x.onGlide) return "qu";
-        return x.initialConsonant as Initial;
-    }
-    // now we have enough information to build the outline for the syllable
-    // despite the "number" type these are actually bitmaps
-    // for consonant:
-    // 0 2 3 4
-    // 1
-    // for tone:
-    //   0 1 2
-    // for vowel:
-    // 0 1
-    type Outline = { consonant: number, tone: number, vowel: number };
-    const consumeNever = function<T> (x: never): T { return x; };
-    const getOutline = (parsed: Parsed): Outline => {
-        const initial = getInitial(parsed);
-        const tone = getTone(parsed);
-        const vowel = getVowelClass(parsed);
-        return {
-            consonant: (() => {
-                // 16: upper key, 8: lower key, 24: both keys
-                if (initial === "b") return 24 + 2;
-                if (initial === "c") return 16 + 1;
-                if (initial === "d") return 16 + 7;
-                if (initial === "đ") return 24 + 1;
-                if (initial === "ph") return 3;
-                if (initial === "g") return 24 + 3;
-                if (initial === "h") return 4;
-                if (initial === "gi") return 8 + 7;
-                if (initial === "kh") return 24 + 5;
-                if (initial === "l") return 24 + 4;
-                if (initial === "m") return 6;
-                if (initial === "n") return 7;
-                if (initial === "nh") return 24 + 7;
-                if (initial === "ng") return 16 + 3;
-                if (initial === "p") return 2;
-                if (initial === "r") return 16 + 4;
-                if (initial === "s") return 8 + 3;
-                if (initial === "t") return 1;
-                if (initial === "th") return 5;
-                if (initial === "tr") return 16 + 5;
-                if (initial === "v") return 16 + 2;
-                if (initial === "x") return 16 + 6;
-                if (initial === "qu") return 24;
-                if (initial === "ch") return 8 + 5
-                return consumeNever(initial);
-            })(),
-            tone: (() => {
-                if (tone === "sắc") return 1;
-                if (tone === "huyền") return 2;
-                if (tone === "hỏi") return 4;
-                if (tone === "ngã") return 3;
-                if (tone === "nặng") return 6;
-                if (tone === "ách") return 5;
-                if (tone === "ạch") return 7;
-                if (tone === "ngang") return 0;
-                return consumeNever(tone);
-            })(),
-            vowel: (() => {
-                if (vowel === "a") return 1;
-                if (vowel === "o") return 2;
-                if (vowel === "i") return 3;
-                if (vowel === "e") return 0;
-                return consumeNever(vowel);
-            })()
-        };
-    };
-    console.log(getOutline(parsedA), getOutline(parsedB));
-    return;
-}
-processWord("tham quan")
+def lookup(stroke):
+    stroke = denumeralize_stroke(stroke[0])
+    if stroke == "-S":
+        return "{^};"
+    if stroke == "-Z":
+        return "{^}'"
+    if stroke == "-D":
+        return "{^}["
+    if stroke == "AO":
+        return "{^}-{^}"
+    if stroke.startswith("#"):
+        return capitalize(assemble(parse(stroke[1:])))
+    return assemble(parse(stroke))
