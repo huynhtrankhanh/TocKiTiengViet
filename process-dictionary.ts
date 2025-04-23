@@ -497,4 +497,27 @@ const processWord = (x: string): string | undefined => {
     // for vowel:
     // 0 1
     type Outline = { consonant: number, tone: number, vowel: number };
+    const getOutline = (x : Parsed): Outline => {
+        const initial = getInitial(parsed);
+        const tone = getTone(parsed);
+        const vowel = getVowelClass(parsed);
+        return {
+            consonant: 0,
+            tone: (() => {
+                if (tone === "sắc") return 1;
+                if (tone === "huyền") return 2;
+                if (tone === "hỏi") return 4;
+                if (tone === "ngã") return 3;
+                if (tone === "nặng") return 6;
+                if (tone === "ách") return 5;
+                if (tone === "ạch") return 7;
+            })(),
+            vowel: (() => {
+                if (vowel === "a") return 1;
+                if (vowel === "o") return 2;
+                if (vowel === "i") return 3;
+                if (vowel === "e") return 0;
+            })()
+        };
+    };
 }
