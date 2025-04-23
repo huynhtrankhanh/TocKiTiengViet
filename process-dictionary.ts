@@ -460,31 +460,31 @@ const processWord = (x: string): string | undefined => {
         const vowel = getVowelClass(parsed);
         return {
             consonant: (() => {
-                // 16: upper key, 8: lower key, 24: both keys
-                if (initial === "b") return 24 + 2;
-                if (initial === "c") return 16 + 1;
-                if (initial === "d") return 16 + 7;
-                if (initial === "đ") return 24 + 1;
-                if (initial === "ph") return 3;
-                if (initial === "g") return 24 + 3;
-                if (initial === "h") return 4;
-                if (initial === "gi") return 8 + 7;
-                if (initial === "kh") return 24 + 5;
-                if (initial === "l") return 24 + 4;
-                if (initial === "m") return 6;
-                if (initial === "n") return 7;
-                if (initial === "nh") return 24 + 7;
-                if (initial === "ng") return 16 + 3;
-                if (initial === "p") return 2;
-                if (initial === "r") return 16 + 4;
-                if (initial === "s") return 8 + 3;
-                if (initial === "t") return 1;
-                if (initial === "th") return 5;
-                if (initial === "tr") return 16 + 5;
-                if (initial === "v") return 16 + 2;
-                if (initial === "x") return 16 + 6;
-                if (initial === "qu") return 24;
-                if (initial === "ch") return 8 + 5
+                // 1: upper key, 2: lower key, 3: both keys
+                if (initial === "b") return 2 * 4 + 3;
+                if (initial === "c") return 1 * 4 + 1;
+                if (initial === "d") return 7 * 4 + 1;
+                if (initial === "đ") return 1 * 4 + 3;
+                if (initial === "ph") return 3 * 4 + 0;
+                if (initial === "g") return 3 * 4 + 3;
+                if (initial === "h") return 4 * 4 + 0;
+                if (initial === "gi") return 7 * 4 + 2;
+                if (initial === "kh") return 5 * 4 + 3;
+                if (initial === "l") return 4 * 4 + 3;
+                if (initial === "m") return 6 * 4 + 0;
+                if (initial === "n") return 7 * 4 + 0;
+                if (initial === "nh") return 7 * 4 + 3;
+                if (initial === "ng") return 3 * 4 + 1;
+                if (initial === "p") return 2 * 4 + 0;
+                if (initial === "r") return 4 * 4 + 1;
+                if (initial === "s") return 3 * 4 + 2;
+                if (initial === "t") return 1 * 4 + 0;
+                if (initial === "th") return 5 * 4 + 0;
+                if (initial === "tr") return 5 * 4 + 1;
+                if (initial === "v") return 2 * 4 + 1;
+                if (initial === "x") return 6 * 4 + 1;
+                if (initial === "qu") return 3;
+                if (initial === "ch") return 5 * 4 + 2;
                 return consumeNever(initial);
             })(),
             tone: (() => {
@@ -523,4 +523,4 @@ const processWord = (x: string): string | undefined => {
     })();
     return leftHand + "*" + rightHand;
 }
-processWord("tham quan")
+console.log(processWord("hẹn hò"))
