@@ -457,5 +457,5 @@ const processWord = (x: string): string | undefined => {
     const parsedA = parse(strokeA)!;
     const strokeB = mapper.reverseLookup(b);
     if (strokeB === undefined) return;
-    const parsedB = parse(strokeB);
+    const parsedB = parse(strokeB)!;
 }
