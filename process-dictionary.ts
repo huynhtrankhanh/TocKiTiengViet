@@ -460,4 +460,27 @@ const processWord = (x: string): string | undefined => {
     const parsedB = parse(strokeB)!;
     // 8 tone system, this is not the ordinary linguistic analysis of Vietnamese tones
     type Tone = "sắc" | "huyền" | "hỏi" | "ngã" | "nặng" | "ách" | "ạch";
+    const getTone = (x: Parsed): Tone => {
+        if (x.tone === "huyền" || x.tone === "hỏi" || x.tone === "ngã") return x.tone;
+        if (x.tone === "sắc") {
+            if (x.final === "p" || x.final === "t" || x.final === "ch" || x.final === "c") return "ách";
+            return "sắc";
+        }
+        if (x.tone === "nặng") {
+            if (x.final === "p" || x.final === "t" || x.final === "ch" || x.final === "c") return "ạch";
+            return "nặng";
+        }
+        throw new Error("you've been bamboozled");
+    }
+    type VowelClass = "a" | "i" | "o" | "e";
+    const getVowelClass = (x: Parsed): VowelClass => {
+        if (x.onGlide && x.initial !== "k") return "o";
+        // do normal processing
+    };
+    type Initial = "b" | "c" | "ch" | "d" | "đ" | "ph" | "g" | "h" | "gi" | "kh" | "l" | "m" | "n" | "nh" | "ng" | "p" | "r" | "s" | "t" | "th" | "tr" | "v" | "x" | "qu";
+    const getInitial = (x: Parsed): Initial => {
+        if (x.initial === "ng/ngh") return "ng";
+        if (x.initial === "c" && x.onGlide) return "qu";
+        return x.initial as Initial;
+    }
 }
