@@ -419,11 +419,11 @@ const processWord = (x: string): string | undefined => {
         if (x.tone === "huyền" || x.tone === "hỏi" || x.tone === "ngã") return x.tone;
         if (x.tone === "") return "ngang";
         if (x.tone === "sắc") {
-            if (x.final === "p" || x.final === "t" || x.final === "ch" || x.final === "c") return "ách";
+            if (x.finalConsonant === "p" || x.finalConsonant === "t" || x.finalConsonant === "ch" || x.finalConsonant === "c") return "ách";
             return "sắc";
         }
         if (x.tone === "nặng") {
-            if (x.final === "p" || x.final === "t" || x.final === "ch" || x.final === "c") return "ạch";
+            if (x.finalConsonant === "p" || x.finalConsonant === "t" || x.finalConsonant === "ch" || x.finalConsonant === "c") return "ạch";
             return "nặng";
         }
         throw new Error("you've been bamboozled");
@@ -453,6 +453,7 @@ const processWord = (x: string): string | undefined => {
     // for vowel:
     // 0 1
     type Outline = { consonant: number, tone: number, vowel: number };
+    const consumeNever = function<T> (x: never): T { return x; };
     const getOutline = (parsed: Parsed): Outline => {
         const initial = getInitial(parsed);
         const tone = getTone(parsed);
@@ -483,6 +484,8 @@ const processWord = (x: string): string | undefined => {
                 if (initial === "v") return 16 + 2;
                 if (initial === "x") return 16 + 6;
                 if (initial === "qu") return 24;
+                if (initial === "ch") return 8 + 5
+                return consumeNever(initial);
             })(),
             tone: (() => {
                 if (tone === "sắc") return 1;
@@ -493,15 +496,18 @@ const processWord = (x: string): string | undefined => {
                 if (tone === "ách") return 5;
                 if (tone === "ạch") return 7;
                 if (tone === "ngang") return 0;
+                return consumeNever(tone);
             })(),
             vowel: (() => {
                 if (vowel === "a") return 1;
                 if (vowel === "o") return 2;
                 if (vowel === "i") return 3;
                 if (vowel === "e") return 0;
+                return consumeNever(vowel);
             })()
         };
     };
     console.log(getOutline(parsedA), getOutline(parsedB));
+    return;
 }
 processWord("tham quan")
