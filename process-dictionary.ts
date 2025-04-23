@@ -458,4 +458,6 @@ const processWord = (x: string): string | undefined => {
     const strokeB = mapper.reverseLookup(b);
     if (strokeB === undefined) return;
     const parsedB = parse(strokeB)!;
+    // 8 tone system, this is not the ordinary linguistic analysis of Vietnamese tones
+    type Tone = "sắc" | "huyền" | "hỏi" | "ngã" | "nặng" | "ách" | "ạch";
 }
