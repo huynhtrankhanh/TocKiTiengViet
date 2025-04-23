@@ -448,4 +448,14 @@ class SyllableParseinator {
 
 const mapper = new SyllableParseinator();
 
-//
+const processWord = (x: string): string | undefined => {
+    const syllables = x.toLowerCase().split(" ");
+    if (syllables.length !== 2) return;
+    const [a, b] = syllables;
+    const strokeA = mapper.reverseLookup(a);
+    if (strokeA === undefined) return;
+    const parsedA = parse(strokeA)!;
+    const strokeB = mapper.reverseLookup(b);
+    if (strokeB === undefined) return;
+    const parsedB = parse(strokeB);
+}
