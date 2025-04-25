@@ -48,20 +48,20 @@ final_map = {
     "F": "w",
     "P": "p",
     "R": "t",
-    "BG": "c",
+    "FR": "c",
     "RB": "ch",
     "PB": "nh",
     "L": "n",
     "PL": "m",
-    "G": "ng",
+    "B": "ng",
 }
 
 tone_map = {
     "T": "sắc",
     "S": "huyền",
-    "D": "hỏi",
+    "G": "hỏi",
     "TS": "ngã",
-    "Z": "nặng",
+    "GS": "nặng",
 }
 
 tone_accents = {
