@@ -117,12 +117,12 @@ Sau khi tách xong 5 thành phần này (một số thành phần có thể khô
 | F           | w                 |
 | P           | p                 |
 | R           | t                 |
-| BG          | c                 |
+| FR          | c                 |
 | RB          | ch                |
 | PB          | nh                |
 | L           | n                 |
 | PL          | m                 |
-| G           | ng                |
+| B           | ng                |
 
 **Bảng Thanh Điệu**
 
@@ -130,9 +130,9 @@ Sau khi tách xong 5 thành phần này (một số thành phần có thể khô
 | :---------- | :------------------- |
 | T           | sắc                  |
 | S           | huyền                |
-| D           | hỏi                  |
+| G           | hỏi                  |
 | TS          | ngã                  |
-| Z           | nặng                 |
+| GS           | nặng                 |
 
 # Gõ số
 **Với những người dùng bàn phím bình thường:**
