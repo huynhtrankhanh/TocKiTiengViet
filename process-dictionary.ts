@@ -545,7 +545,7 @@ const processDictionary = (words: string[]) => {
                 conflict.set(stroke, 1);
                 return 0;
             } else {
-                conflict.set(conflict.get(stroke)! + 1);
+                conflict.set(stroke, conflict.get(stroke)! + 1);
                 return conflict.get(stroke)! - 1;
             }
         })();
