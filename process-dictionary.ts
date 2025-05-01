@@ -523,4 +523,15 @@ const processWord = (x: string): string | undefined => {
     })();
     return leftHand + "*" + rightHand;
 }
-console.log(processWord("hẹn hò"))
+
+const processDictionary = (words: string[]) => {
+    const strokes = words.filter(x => x === x.toLowerCase()).sort().map(word => [word, processWord(word)]).filter(x => x[1] !== undefined);
+    const conflicts = new Map<string, string[]>();
+    for (const [word, stroke] of strokes) {
+        if (!conflict.has(stroke)) {
+            conflict.set(stroke, [word]);
+        } else {
+            conflict.get(stroke)!.push(word);
+        }
+    }
+};
