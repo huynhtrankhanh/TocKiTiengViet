@@ -540,6 +540,7 @@ const processDictionary = (words: string[]) => {
     const map: Record<string, string> = {};
     for (const [word, stroke1] of strokes) {
         const stroke = stroke1!;
+        if (stroke === "*") continue; // we still need * to undo
         const variant = (() => {
             if (!conflict.has(stroke)) {
                 conflict.set(stroke, 1);
