@@ -526,12 +526,33 @@ const processWord = (x: string): string | undefined => {
 
 const processDictionary = (words: string[]) => {
     const strokes = words.filter(x => x === x.toLowerCase()).sort().map(word => [word, processWord(word)]).filter(x => x[1] !== undefined);
-    const conflicts = new Map<string, string[]>();
+    const conflicts = new Map<string, number>();
+    const disambiguate = (stroke, variant) => {
+        if (variant === 0) return stroke;
+        if (variant === 1) return stroke + "D";
+        if (variant === 2) return stroke + "DZ";
+        if (variant === 3) return stroke + "Z";
+        if (variant === 4) return stroke.split(*).join("-") + "D";
+        if (variant === 5) return stroke.split(*).join("-") + "DZ";
+        if (variant === 6) return stroke.split(*).join("-") + "Z";
+        throw new Error("bamboozle");
+    };
+    const map = {};
     for (const [word, stroke] of strokes) {
-        if (!conflict.has(stroke)) {
-            conflict.set(stroke, [word]);
-        } else {
-            conflict.get(stroke)!.push(word);
+        const variant = (() => {
+            if (!conflict.has(stroke)) {
+                conflict.set(stroke, 1);
+                return 0;
+            } else {
+                conflict.set(conflict.get(stroke)! + 1);
+                return conflict.get(stroke)! - 1;
+            }
+        })();
+        if (variant >= 7) {
+            // ought to throw under the bus
+            continue;
         }
+        map[disambiguate(stroke, variant)] = word;
     }
+    return map;
 };
