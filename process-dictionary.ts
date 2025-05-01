@@ -525,20 +525,21 @@ const processWord = (x: string): string | undefined => {
 }
 
 const processDictionary = (words: string[]) => {
-    const strokes = words.filter(x => x === x.toLowerCase()).sort().map(word => [word, processWord(word)]).filter(x => x[1] !== undefined);
-    const conflicts = new Map<string, number>();
-    const disambiguate = (stroke, variant) => {
+    const strokes = words.filter(x => x === x.toLowerCase()).sort().map((word): [string, string | undefined] => [word, processWord(word)]).filter(x => x[1] !== undefined);
+    const conflict = new Map<string, number>();
+    const disambiguate = (stroke: string, variant: number) => {
         if (variant === 0) return stroke;
         if (variant === 1) return stroke + "D";
         if (variant === 2) return stroke + "DZ";
         if (variant === 3) return stroke + "Z";
-        if (variant === 4) return stroke.split(*).join("-") + "D";
-        if (variant === 5) return stroke.split(*).join("-") + "DZ";
-        if (variant === 6) return stroke.split(*).join("-") + "Z";
+        if (variant === 4) return stroke.split("*").join("-") + "D";
+        if (variant === 5) return stroke.split("*").join("-") + "DZ";
+        if (variant === 6) return stroke.split("*").join("-") + "Z";
         throw new Error("bamboozle");
     };
-    const map = {};
-    for (const [word, stroke] of strokes) {
+    const map: Record<string, string> = {};
+    for (const [word, stroke1] of strokes) {
+        const stroke = stroke1!;
         const variant = (() => {
             if (!conflict.has(stroke)) {
                 conflict.set(stroke, 1);
