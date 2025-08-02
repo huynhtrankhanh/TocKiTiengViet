@@ -265,7 +265,7 @@ def assemble(parsed):
 
     def final():
         if parsed.final_consonant == "w":
-            if parsed.vowel in ["iê/ia", "ư", "ê", "u", "ă", "â", "i"]:
+            if parsed.vowel in ["iê/ia", "ư", "ưa/ươ", "ê", "u", "ă", "â", "i"]:
                 return "u"
             return "o"
         if parsed.final_consonant == "j":
