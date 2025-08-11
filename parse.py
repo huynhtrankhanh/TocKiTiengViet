@@ -203,7 +203,7 @@ def assemble(parsed):
         if parsed.initial_consonant == "g":
             return "g" if parsed.on_glide or f else "gh"
         if parsed.initial_consonant == "gi":
-            return "g" if not parsed.on_glide and parsed.vowel == "i" else "gi"
+            return "g" if not parsed.on_glide and (parsed.vowel == "i" or parsed.vowel == "iê/ia") else "gi"
         if parsed.initial_consonant == "c":
             return "q" if parsed.on_glide else "c" if f else "k"
         return parsed.initial_consonant
