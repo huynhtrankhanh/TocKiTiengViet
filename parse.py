@@ -211,9 +211,13 @@ def assemble(parsed):
     def middle():
         if parsed.vowel == "iê/ia":
             if parsed.initial_consonant == "":
-                return ("uy" if parsed.on_glide else "y") + tone_accents["ê"][
-                    parsed.tone
-                ]
+                if parsed.on_glide:
+                    if parsed.final_consonant == "":
+                        return "uy" + tone_accents["a"][parsed.tone]
+                    return "uy" + tone_accents["ê"][parsed.tone]
+                if parsed.final_consonant == "":
+                    return tone_accents["i"][parsed.tone] + "a"
+                return "y" + tone_accents["ê"][parsed.tone]
             if parsed.on_glide:
                 if parsed.final_consonant == "":
                     return "uy" + tone_accents["a"][parsed.tone]
