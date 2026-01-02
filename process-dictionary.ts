@@ -163,16 +163,35 @@ function assemble(parsed: Parsed): string {
 
   const middle = (): string => {
     if (parsed.vowel === "iê/ia") {
+      // Case 1: No Initial Consonant
       if (parsed.initialConsonant === "") {
-        return (parsed.onGlide ? "uy" : "y") + toneAccents["ê"][parsed.tone];
+        if (parsed.onGlide) {
+          if (parsed.finalConsonant === "") {
+            return "uy" + toneAccents["a"][parsed.tone]; // e.g., uya
+          }
+          return "uy" + toneAccents["ê"][parsed.tone]; // e.g., uyên
+        }
+        
+        // No Glide, No Initial
+        if (parsed.finalConsonant === "") {
+          return toneAccents["i"][parsed.tone] + "a"; // e.g., ia
+        }
+        return "y" + toneAccents["ê"][parsed.tone]; // e.g., yên
       }
+    
+      // Case 2: Has Initial Consonant
       if (parsed.onGlide) {
-        return "uy" + toneAccents[parsed.finalConsonant === "" ? "a" : "ê"][parsed.tone];
+        if (parsed.finalConsonant === "") {
+          return "uy" + toneAccents["a"][parsed.tone]; // e.g., khuya
+        }
+        return "uy" + toneAccents["ê"][parsed.tone]; // e.g., tuyên
       }
+    
+      // No Glide, Has Initial
       if (parsed.finalConsonant === "") {
-        return toneAccents["i"][parsed.tone] + "a";
+        return toneAccents["i"][parsed.tone] + "a"; // e.g., chia
       }
-      return "i" + toneAccents["ê"][parsed.tone];
+      return "i" + toneAccents["ê"][parsed.tone]; // e.g., tiên
     }
 
     if (parsed.vowel === "ua/uô") {
