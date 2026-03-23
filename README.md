@@ -1,5 +1,5 @@
 # Bộ gõ tốc kí tiếng Việt
-**Lưu ý:** Muốn tìm hiểu thêm hay có gì chưa hiểu thì [nhắn tin mình nhé](https://m.me/huynh.trankhanh.14).
+**Lưu ý:** Muốn tìm hiểu thêm hay có gì chưa hiểu thì [nhắn tin mình nhé](https://huynhtrankhanh.com).
 
 Bộ gõ này lấy cảm hứng cực mạnh từ https://github.com/user202729/plover_vi của anh [Bùi Hồng Đức](https://vietnam.vnanet.vn/vietnamese/tin-tuc/bui-hong-duc-chang-trai-vang-voi-diem-so-tuyet-doi-tai-olympic-tin-hoc-quoc-te-244171.html).
 
