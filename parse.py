@@ -81,7 +81,8 @@ tone_accents = {
 
 
 class Parsed:
-    def __init__(self, on_glide, initial_consonant, vowel, final_consonant, tone):
+    def __init__(self, capitalize, on_glide, initial_consonant, vowel, final_consonant, tone):
+        self.capitalize = capitalize
         self.on_glide = on_glide
         self.initial_consonant = initial_consonant
         self.vowel = vowel
@@ -90,6 +91,11 @@ class Parsed:
 
 
 def parse(stroke):
+    capitalize_flag = False
+    if stroke.startswith("#"):
+        capitalize_flag = True
+        stroke = stroke[1:]
+
     on_glide = stroke.startswith("S")
     if on_glide:
         stroke = stroke[1:]
@@ -97,8 +103,11 @@ def parse(stroke):
     initial_consonant = ""
     vowel = ""
     final_consonant = ""
+    final_steno = ""
     tone = ""
+    tone_steno = ""
 
+    survived = False
     # Match Initial Consonant (4 -> 3 -> 2 -> 1 letter)
     for length in range(4, 0, -1):
         candidate = stroke[:length]
@@ -125,21 +134,36 @@ def parse(stroke):
         candidate = stroke[:length]
         if candidate in final_map:
             final_consonant = final_map[candidate]
+            final_steno = candidate
             stroke = stroke[length:]
             survived = True
             break
 
     # Match Tone (if anything left, it must be a tone)
-    survived = stroke == ""
-    if stroke in tone_map:
-        tone = tone_map[stroke]
-        stroke = ""
-        survived = True
+    survived = len(stroke) == 0
+    if len(stroke) > 0:
+        if stroke in tone_map:
+            tone = tone_map[stroke]
+            tone_steno = stroke
+            stroke = ""
+            survived = True
+        elif stroke in ["BL", "BLG"]:
+            tone_steno = stroke
+            stroke = ""
+            survived = True
 
     if not survived:
         raise KeyError("")
 
-    return Parsed(on_glide, initial_consonant, vowel, final_consonant, tone)
+    if tone_steno in ["BL", "BLG"]:
+        stop_finals = { "P": "p", "R": "t", "FR": "c", "RP": "ch" }
+        if final_steno in stop_finals:
+            final_consonant = stop_finals[final_steno]
+            tone = "sắc" if tone_steno == "BL" else "nặng"
+        else:
+            raise KeyError("")
+
+    return Parsed(capitalize_flag, on_glide, initial_consonant, vowel, final_consonant, tone)
 
 
 def denumeralize_stroke(stroke):
@@ -147,20 +171,6 @@ def denumeralize_stroke(stroke):
     Denumeralizes a stroke by converting digits to their Plover key equivalents
     and prepending the '#' character, ONLY if the input stroke contains digits
     and does NOT already start with '#'. Otherwise, return the input as is.
-
-    For example:
-        12A -> #STA  (Numeralized input with digits)
-        #ABC -> #ABC (Already denumeralized)
-        ABC  -> ABC   (No digits, not numeralized)
-        word -> word  (No digits, not numeralized)
-
-    Args:
-        stroke: The stroke string, possibly "numeralized" (e.g., "12A"),
-                already "denumeralized" (e.g., "#ABC"), or not numeralized
-                (e.g., "ABC").
-
-    Returns:
-        The "denumeralized" stroke string (e.g., "#STA", "#ABC", or "ABC").
     """
     if stroke.startswith("#"):
         return stroke  # Already denumeralized, return as is
@@ -169,29 +179,21 @@ def denumeralize_stroke(stroke):
     for char in stroke:
         if char.isdigit():
             has_digit = True
-            break  # No need to check further if we found a digit
+            break
 
     if not has_digit:
-        return stroke  # No digits found, return as is
+        return stroke
 
     digit_to_key = {
-        "1": "S",
-        "2": "T",
-        "3": "P",
-        "4": "H",
-        "5": "A",
-        "0": "O",
-        "6": "F",
-        "7": "P",
-        "8": "L",
-        "9": "T",
+        "1": "S", "2": "T", "3": "P", "4": "H", "5": "A",
+        "0": "O", "6": "F", "7": "P", "8": "L", "9": "T",
     }
     plover_stroke = "#"
     for char in stroke:
         if char in digit_to_key:
             plover_stroke += digit_to_key[char]
         else:
-            plover_stroke += char  # Keep non-digit characters as they are
+            plover_stroke += char
     return plover_stroke
 
 
@@ -205,7 +207,7 @@ def assemble(parsed):
         if parsed.initial_consonant == "gi":
             return "g" if not parsed.on_glide and (parsed.vowel == "i" or parsed.vowel == "iê/ia") else "gi"
         if parsed.initial_consonant == "c":
-            return "q" if parsed.on_glide else "c" if f else "k"
+            return "q" if parsed.on_glide else ("c" if f else "k")
         return parsed.initial_consonant
 
     def middle():
@@ -218,6 +220,7 @@ def assemble(parsed):
                 if parsed.final_consonant == "":
                     return tone_accents["i"][parsed.tone] + "a"
                 return "y" + tone_accents["ê"][parsed.tone]
+            # Has initial consonant
             if parsed.on_glide:
                 if parsed.final_consonant == "":
                     return "uy" + tone_accents["a"][parsed.tone]
@@ -225,6 +228,7 @@ def assemble(parsed):
             if parsed.final_consonant == "":
                 return tone_accents["i"][parsed.tone] + "a"
             return "i" + tone_accents["ê"][parsed.tone]
+            
         if parsed.vowel == "ua/uô":
             return (
                 tone_accents["u"][parsed.tone] + "a"
@@ -239,32 +243,32 @@ def assemble(parsed):
             )
         if parsed.vowel == "i":
             if parsed.on_glide:
-                return (
-                    (
+                if parsed.final_consonant == "":
+                    return (
                         tone_accents["u"][parsed.tone] + "y"
                         if parsed.initial_consonant != "c"
                         else "u" + tone_accents["y"][parsed.tone]
                     )
-                    if parsed.final_consonant == ""
-                    else "u" + tone_accents["y"][parsed.tone]
-                )
+                return "u" + tone_accents["y"][parsed.tone]
             return tone_accents["i"][parsed.tone]
+            
         if parsed.vowel == "ă" and parsed.final_consonant in ["w", "j"]:
-            return (
-                ("u" if parsed.initial_consonant == "c" else "o")
-                if parsed.on_glide
-                else ""
-            ) + tone_accents["a"][parsed.tone]
+            prefix = ("u" if parsed.initial_consonant == "c" else "o") if parsed.on_glide else ""
+            return prefix + tone_accents["a"][parsed.tone]
+            
         if parsed.vowel in ["â", "ê"] and parsed.on_glide:
             return "u" + tone_accents[parsed.vowel][parsed.tone]
+            
         if parsed.initial_consonant == "c" and parsed.on_glide:
             return "u" + tone_accents[parsed.vowel][parsed.tone]
+            
         if parsed.on_glide:
             return (
                 tone_accents["o"][parsed.tone] + parsed.vowel
                 if parsed.final_consonant == ""
                 else "o" + tone_accents[parsed.vowel][parsed.tone]
             )
+            
         return tone_accents[parsed.vowel][parsed.tone]
 
     def final():
@@ -278,11 +282,10 @@ def assemble(parsed):
             return "i"
         return parsed.final_consonant
 
-    return initial() + middle() + final()
-
-
-def capitalize(x):
-    return x[0].upper() + x[1:]
+    text = initial() + middle() + final()
+    if parsed.capitalize and text:
+        return text[0].upper() + text[1:]
+    return text
 
 
 LONGEST_KEY = 1
@@ -298,6 +301,5 @@ def lookup(stroke):
         return "{^}["
     if stroke == "AO":
         return "{^}-{^}"
-    if stroke.startswith("#"):
-        return capitalize(assemble(parse(stroke[1:])))
+    
     return assemble(parse(stroke))
