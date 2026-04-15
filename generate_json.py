@@ -11,12 +11,17 @@ def generate_dictionary():
     vowels = list(parse.vowel_map.keys())
     finals = [""] + list(parse.final_map.keys())
     tones = [""] + list(parse.tone_map.keys())
+    stop_tones = ["BL", "BLG"]
+    stop_tone_finals = {"P", "R", "FR", "RP"}
     glides = ["", "S"]
 
     dictionary = {}
 
     # Pre-calculate count
-    total = len(initials) * len(vowels) * len(finals) * len(tones) * len(glides)
+    total = 0
+    for final in finals:
+        tone_options = tones + (stop_tones if final in stop_tone_finals else [])
+        total += len(glides) * len(initials) * len(vowels) * len(tone_options)
     print(f"Generating {total} combinations...")
 
     count = 0
@@ -26,7 +31,8 @@ def generate_dictionary():
         for initial in initials:
             for vowel in vowels:
                 for final in finals:
-                    for tone in tones:
+                    tone_options = tones + (stop_tones if final in stop_tone_finals else [])
+                    for tone in tone_options:
                         raw_stroke = glide + initial + vowel + final + tone
 
                         try:
