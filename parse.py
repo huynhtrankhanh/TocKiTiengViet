@@ -46,22 +46,18 @@ vowel_map = {
 final_map = {
     "FP": "j",
     "F": "w",
-    "P": "p",
-    "R": "t",
-    "FR": "c",
-    "RB": "ch",
-    "PB": "nh",
-    "L": "n",
-    "PL": "m",
-    "B": "ng",
+    "P": "m",
+    "R": "n",
+    "FR": "ng",
+    "RP": "nh",
 }
 
 tone_map = {
-    "T": "sắc",
-    "S": "huyền",
-    "G": "hỏi",
-    "TS": "ngã",
-    "GS": "nặng",
+    "L": "sắc",
+    "G": "huyền",
+    "B": "hỏi",
+    "LG": "ngã",
+    "BG": "nặng",
 }
 
 tone_accents = {
